@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GEC Event Portal</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f5f5;
+            min-height: 100vh;
+        }
+
+        .navbar {
+            background: #2c3e50;
+            color: white;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .navbar h1 {
+            font-size: 1.5rem;
+        }
+
+        .navbar button {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        .navbar button:hover {
+            background: #c0392b;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+        }
+
+        .auth-form {
+            max-width: 400px;
+            margin: 2rem auto;
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .auth-form h2 {
+            margin-bottom: 1.5rem;
+            color: #2c3e50;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #2c3e50;
+            font-weight: 500;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #bdc3c7;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 5px rgba(52, 152, 219, 0.3);
+        }
+
+        button {
+            width: 100%;
+            padding: 0.75rem;
+            background: #3498db;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 1rem;
+            cursor: pointer;
+            margin-top: 1rem;
+        }
+
+        button:hover {
+            background: #2980b9;
+        }
+
+        .toggle-form {
+            text-align: center;
+            margin-top: 1rem;
+            color: #7f8c8d;
+        }
+
+        .toggle-form a {
+            color: #3498db;
+            cursor: pointer;
+            text-decoration: underline;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .dashboard {
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .dashboard h2 {
+            color: #2c3e50;
+            margin-bottom: 1rem;
+        }
+
+        .user-info {
+            background: #ecf0f1;
+            padding: 1rem;
+            border-radius: 4px;
+            margin-bottom: 2rem;
+        }
+
+        .role-badge {
+            display: inline-block;
+            background: #3498db;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            margin-left: 1rem;
+        }
+
+        .section {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background: #f9f9f9;
+            border-left: 4px solid #3498db;
+            border-radius: 4px;
+        }
+
+        .section h3 {
+            color: #2c3e50;
+            margin-bottom: 1rem;
+        }
+
+        .event-card {
+            background: white;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border: 1px solid #ecf0f1;
+            border-radius: 4px;
+        }
+
+        .event-card h4 {
+            color: #2c3e50;
+            margin-bottom: 0.5rem;
+        }
+
+        .event-card button {
+            margin-top: 1rem;
+            font-size: 0.9rem;
+            padding: 0.5rem 1rem;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: #3498db;
+            color: white;
+            padding: 1.5rem;
+            border-radius: 4px;
+            text-align: center;
+        }
+
+        .stat-card .number {
+            font-size: 2rem;
+            font-weight: bold;
+        }
+
+        .stat-card .label {
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+            opacity: 0.9;
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+
+        .table th {
+            background: #2c3e50;
+            color: white;
+            padding: 1rem;
+            text-align: left;
+        }
+
+        .table td {
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid #ecf0f1;
+        }
+
+        .table tr:hover {
+            background: #f9f9f9;
+        }
+
+        .alert {
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-radius: 4px;
+            color: white;
+        }
+
+        .alert-error {
+            background: #e74c3c;
+        }
+
+        .alert-success {
+            background: #27ae60;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <div id="navbar" class="navbar hidden">
+        <h1>GEC Event Portal</h1>
+        <div>
+            <span id="userDisplay" style="margin-right: 1rem;"></span>
+            <button onclick="logout()">Logout</button>
+        </div>
+    </div>
+
+    <!-- Main Container -->
+    <div class="container">
+        <!-- Auth Forms -->
+        <div id="authSection">
+            <!-- Login Form -->
+            <div id="loginForm" class="auth-form">
+                <h2>Login</h2>
+                <div id="loginError" class="alert alert-error hidden"></div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="loginEmail" placeholder="your@gec.ac.in" required>
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="loginPassword" placeholder="Password" required>
+                </div>
+                <button onclick="handleLogin()">Login</button>
+                <div class="toggle-form">
+                    Don't have an account? <a onclick="toggleForms()">Register here</a>
+                </div>
+            </div>
+
+            <!-- Registration Form -->
+            <div id="registerForm" class="auth-form hidden">
+                <h2>Register</h2>
+                <div id="registerError" class="alert alert-error hidden"></div>
+                <div class="form-group">
+                    <label>Full Name</label>
+                    <input type="text" id="regName" placeholder="Your Name" required>
+                </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="regEmail" placeholder="your@gec.ac.in" required>
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="regPassword" placeholder="Password" required>
+                </div>
+                <div class="form-group">
+                    <label>Role</label>
+                    <select id="regRole" required>
+                        <option value="">Select Your Role</option>
+                        <option value="student">Student</option>
+                        <option value="club_leader">Club Leader</option>
+                        <option value="super_admin">Super Admin</option>
+                    </select>
+                </div>
+                <button onclick="handleRegister()">Register</button>
+                <div class="toggle-form">
+                    Already have an account? <a onclick="toggleForms()">Login here</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dashboards (shown after login) -->
+        <div id="dashboardSection" class="hidden">
+            <!-- Student Dashboard -->
+            <div id="studentDash" class="dashboard hidden">
+                <h2>Student Dashboard</h2>
+                <div class="user-info">
+                    Welcome, <strong id="studentName"></strong>
+                    <span class="role-badge">Student</span>
+                </div>
+
+                <div class="stats">
+                    <div class="stat-card">
+                        <div class="number" id="studentEventCount">0</div>
+                        <div class="label">Events Registered</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="number" id="studentUpcoming">0</div>
+                        <div class="label">Upcoming Events</div>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h3>My Registrations</h3>
+                    <div id="studentRegistrations">
+                        <p>No registrations yet.</p>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h3>Available Events</h3>
+                    <div id="studentEvents">
+                        <p>No events available.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Club Leader Dashboard -->
+            <div id="clubDash" class="dashboard hidden">
+                <h2>Club Leader Dashboard</h2>
+                <div class="user-info">
+                    Welcome, <strong id="clubName"></strong>
+                    <span class="role-badge">Club Leader</span>
+                </div>
+
+                <div class="stats">
+                    <div class="stat-card">
+                        <div class="number" id="clubEventCount">0</div>
+                        <div class="label">Events Created</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="number" id="clubTotalReg">0</div>
+                        <div class="label">Total Registrations</div>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h3>Create New Event</h3>
+                    <div class="form-group">
+                        <input type="text" id="eventName" placeholder="Event Name">
+                    </div>
+                    <div class="form-group">
+                        <input type="text" id="eventDesc" placeholder="Description">
+                    </div>
+                    <div class="form-group">
+                        <input type="date" id="eventDate">
+                    </div>
+                    <button onclick="createEvent()">Create Event</button>
+                </div>
+
+                <div class="section">
+                    <h3>My Events</h3>
+                    <div id="clubEvents">
+                        <p>No events created yet.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Super Admin Dashboard -->
+            <div id="adminDash" class="dashboard hidden">
+                <h2>Super Admin Dashboard</h2>
+                <div class="user-info">
+                    Welcome, <strong id="adminName"></strong>
+                    <span class="role-badge">Super Admin</span>
+                </div>
+
+                <div class="stats">
+                    <div class="stat-card">
+                        <div class="number" id="adminUserCount">0</div>
+                        <div class="label">Total Users</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="number" id="adminEventCount">0</div>
+                        <div class="label">Total Events</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="number" id="adminRegCount">0</div>
+                        <div class="label">Total Registrations</div>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h3>All Users</h3>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Role</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="adminUsersList">
+                            <tr><td colspan="4">No users yet.</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="section">
+                    <h3>All Events</h3>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Event Name</th>
+                                <th>Created By</th>
+                                <th>Date</th>
+                                <th>Registrations</th>
+                            </tr>
+                        </thead>
+                        <tbody id="adminEventsList">
+                            <tr><td colspan="4">No events yet.</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Data store (localStorage)
+        const db = {
+            users: [],
+            events: [],
+            registrations: [],
+            currentUser: null
+        };
+
+        // Initialize from localStorage
+        function initDB() {
+            const saved = localStorage.getItem('gec_portal_db');
+            if (saved) {
+                Object.assign(db, JSON.parse(saved));
+            }
+            db.currentUser = JSON.parse(localStorage.getItem('gec_portal_user'));
+            if (db.currentUser) {
+                showDashboard();
+            }
+        }
+
+        // Save to localStorage
+        function saveDB() {
+            localStorage.setItem('gec_portal_db', JSON.stringify({
+                users: db.users,
+                events: db.events,
+                registrations: db.registrations
+            }));
+        }
+
+        // Toggle between login and register forms
+        function toggleForms() {
+            document.getElementById('loginForm').classList.toggle('hidden');
+            document.getElementById('registerForm').classList.toggle('hidden');
+        }
+
+        // Handle Login
+        function handleLogin() {
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            const errorDiv = document.getElementById('loginError');
+
+            if (!email || !password) {
+                errorDiv.textContent = 'Please fill all fields';
+                errorDiv.classList.remove('hidden');
+                return;
+            }
+
+            const user = db.users.find(u => u.email === email && u.password === password);
+            if (!user) {
+                errorDiv.textContent = 'Invalid email or password';
+                errorDiv.classList.remove('hidden');
+                return;
+            }
+
+            db.currentUser = user;
+            localStorage.setItem('gec_portal_user', JSON.stringify(user));
+            errorDiv.classList.add('hidden');
+            showDashboard();
+        }
+
+        // Handle Registration
+        function handleRegister() {
+            const name = document.getElementById('regName').value;
+            const email = document.getElementById('regEmail').value;
+            const password = document.getElementById('regPassword').value;
+            const role = document.getElementById('regRole').value;
+            const errorDiv = document.getElementById('registerError');
+
+            if (!name || !email || !password || !role) {
+                errorDiv.textContent = 'Please fill all fields';
+                errorDiv.classList.remove('hidden');
+                return;
+            }
+
+            if (!email.endsWith('@gec.ac.in')) {
+                errorDiv.textContent = 'Email must be @gec.ac.in';
+                errorDiv.classList.remove('hidden');
+                return;
+            }
+
+            if (db.users.find(u => u.email === email)) {
+                errorDiv.textContent = 'Email already registered';
+                errorDiv.classList.remove('hidden');
+                return;
+            }
+
+            const newUser = {
+                id: Date.now(),
+                name,
+                email,
+                password,
+                role,
+                createdAt: new Date().toISOString()
+            };
+
+            db.users.push(newUser);
+            saveDB();
+            errorDiv.classList.add('hidden');
+
+            db.currentUser = newUser;
+            localStorage.setItem('gec_portal_user', JSON.stringify(newUser));
+            showDashboard();
+        }
+
+        // Show Dashboard
+        function showDashboard() {
+            if (!db.currentUser) return;
+
+            document.getElementById('authSection').classList.add('hidden');
+            document.getElementById('dashboardSection').classList.remove('hidden');
+            document.getElementById('navbar').classList.remove('hidden');
+
+            // Update navbar
+            document.getElementById('userDisplay').textContent = `${db.currentUser.name} (${db.currentUser.role})`;
+
+            // Show appropriate dashboard
+            document.getElementById('studentDash').classList.add('hidden');
+            document.getElementById('clubDash').classList.add('hidden');
+            document.getElementById('adminDash').classList.add('hidden');
+
+            if (db.currentUser.role === 'student') {
+                showStudentDash();
+            } else if (db.currentUser.role === 'club_leader') {
+                showClubDash();
+            } else if (db.currentUser.role === 'super_admin') {
+                showAdminDash();
+            }
+        }
+
+        // Student Dashboard
+        function showStudentDash() {
+            document.getElementById('studentDash').classList.remove('hidden');
+            document.getElementById('studentName').textContent = db.currentUser.name;
+
+            const myRegs = db.registrations.filter(r => r.userId === db.currentUser.id);
+            document.getElementById('studentEventCount').textContent = myRegs.length;
+
+            const regDiv = document.getElementById('studentRegistrations');
+            if (myRegs.length === 0) {
+                regDiv.innerHTML = '<p>No registrations yet.</p>';
+            } else {
+                regDiv.innerHTML = myRegs.map(reg => {
+                    const event = db.events.find(e => e.id === reg.eventId);
+                    return `<div class="event-card">
+                        <h4>${event.name}</h4>
+                        <p>${event.description}</p>
+                        <p><strong>Date:</strong> ${event.date}</p>
+                    </div>`;
+                }).join('');
+            }
+
+            const evDiv = document.getElementById('studentEvents');
+            if (db.events.length === 0) {
+                evDiv.innerHTML = '<p>No events available.</p>';
+            } else {
+                evDiv.innerHTML = db.events.map(e => `
+                    <div class="event-card">
+                        <h4>${e.name}</h4>
+                        <p>${e.description}</p>
+                        <p><strong>Date:</strong> ${e.date}</p>
+                        <button onclick="registerEvent(${e.id})">Register</button>
+                    </div>
+                `).join('');
+            }
+        }
+
+        // Club Leader Dashboard
+        function showClubDash() {
+            document.getElementById('clubDash').classList.remove('hidden');
+            document.getElementById('clubName').textContent = db.currentUser.name;
+
+            const myEvents = db.events.filter(e => e.createdBy === db.currentUser.id);
+            document.getElementById('clubEventCount').textContent = myEvents.length;
+
+            const totalRegs = myEvents.reduce((sum, e) => 
+                sum + db.registrations.filter(r => r.eventId === e.id).length, 0
+            );
+            document.getElementById('clubTotalReg').textContent = totalRegs;
+
+            const evDiv = document.getElementById('clubEvents');
+            if (myEvents.length === 0) {
+                evDiv.innerHTML = '<p>No events created yet.</p>';
+            } else {
+                evDiv.innerHTML = myEvents.map(e => {
+                    const regs = db.registrations.filter(r => r.eventId === e.id);
+                    return `<div class="event-card">
+                        <h4>${e.name}</h4>
+                        <p>${e.description}</p>
+                        <p><strong>Date:</strong> ${e.date} | <strong>Registrations:</strong> ${regs.length}</p>
+                    </div>`;
+                }).join('');
+            }
+        }
+
+        // Super Admin Dashboard
+        function showAdminDash() {
+            document.getElementById('adminDash').classList.remove('hidden');
+            document.getElementById('adminName').textContent = db.currentUser.name;
+
+            document.getElementById('adminUserCount').textContent = db.users.length;
+            document.getElementById('adminEventCount').textContent = db.events.length;
+            document.getElementById('adminRegCount').textContent = db.registrations.length;
+
+            // Users table
+            const usersBody = document.getElementById('adminUsersList');
+            if (db.users.length === 0) {
+                usersBody.innerHTML = '<tr><td colspan="4">No users yet.</td></tr>';
+            } else {
+                usersBody.innerHTML = db.users.map(u => `
+                    <tr>
+                        <td>${u.name}</td>
+                        <td>${u.email}</td>
+                        <td>${u.role}</td>
+                        <td><button onclick="deleteUser(${u.id})" style="background:#e74c3c; width: 80px;">Delete</button></td>
+                    </tr>
+                `).join('');
+            }
+
+            // Events table
+            const eventsBody = document.getElementById('adminEventsList');
+            if (db.events.length === 0) {
+                eventsBody.innerHTML = '<tr><td colspan="4">No events yet.</td></tr>';
+            } else {
+                eventsBody.innerHTML = db.events.map(e => {
+                    const creator = db.users.find(u => u.id === e.createdBy);
+                    const regs = db.registrations.filter(r => r.eventId === e.id);
+                    return `<tr>
+                        <td>${e.name}</td>
+                        <td>${creator ? creator.name : 'Unknown'}</td>
+                        <td>${e.date}</td>
+                        <td>${regs.length}</td>
+                    </tr>`;
+                }).join('');
+            }
+        }
+
+        // Create Event (Club Leader)
+        function createEvent() {
+            const name = document.getElementById('eventName').value;
+            const desc = document.getElementById('eventDesc').value;
+            const date = document.getElementById('eventDate').value;
+
+            if (!name || !desc || !date) {
+                alert('Please fill all fields');
+                return;
+            }
+
+            const event = {
+                id: Date.now(),
+                name,
+                description: desc,
+                date,
+                createdBy: db.currentUser.id
+            };
+
+            db.events.push(event);
+            saveDB();
+            document.getElementById('eventName').value = '';
+            document.getElementById('eventDesc').value = '';
+            document.getElementById('eventDate').value = '';
+            showClubDash();
+        }
+
+        // Register for Event (Student)
+        function registerEvent(eventId) {
+            if (db.registrations.find(r => r.userId === db.currentUser.id && r.eventId === eventId)) {
+                alert('Already registered for this event');
+                return;
+            }
+
+            db.registrations.push({
+                id: Date.now(),
+                userId: db.currentUser.id,
+                eventId: eventId,
+                registeredAt: new Date().toISOString()
+            });
+
+            saveDB();
+            showStudentDash();
+            alert('Successfully registered!');
+        }
+
+        // Delete User (Admin)
+        function deleteUser(userId) {
+            if (confirm('Delete this user?')) {
+                db.users = db.users.filter(u => u.id !== userId);
+                saveDB();
+                showAdminDash();
+            }
+        }
+
+        // Logout
+        function logout() {
+            db.currentUser = null;
+            localStorage.removeItem('gec_portal_user');
+            document.getElementById('authSection').classList.remove('hidden');
+            document.getElementById('dashboardSection').classList.add('hidden');
+            document.getElementById('navbar').classList.add('hidden');
+            document.getElementById('loginForm').classList.remove('hidden');
+            document.getElementById('registerForm').classList.add('hidden');
+            document.getElementById('loginEmail').value = '';
+            document.getElementById('loginPassword').value = '';
+        }
+
+        // Initialize on page load
+        window.addEventListener('DOMContentLoaded', initDB);
+    </script>
+</body>
+</html>
