@@ -709,8 +709,170 @@
                 db.users = [
                     { id: 1, name: 'Admin User', email: 'admin@gec.ac.in', password: 'admin123', role: 'super_admin' },
                     { id: 2, name: 'Tech Club', email: 'club@gec.ac.in', password: 'club123', role: 'club_leader' },
-                    { id: 3, name: 'Test Student', email: 'student@gec.ac.in', password: 'student123', role: 'student' }
+                    { id: 3, name: 'Test Student', email: 'student@gec.ac.in', password: 'student123', role: 'student' },
+                    { id: 4, name: 'Rohit Sharma', email: 'rohit@gec.ac.in', password: 'pass123', role: 'student' },
+                    { id: 5, name: 'Priya Singh', email: 'priya@gec.ac.in', password: 'pass123', role: 'student' }
                 ];
+
+                // Add sample events
+                const today = new Date();
+                const nextWeek = new Date(today.getTime() + 7*24*60*60*1000);
+                const twoWeeks = new Date(today.getTime() + 14*24*60*60*1000);
+                const threeWeeks = new Date(today.getTime() + 21*24*60*60*1000);
+                const lastMonth = new Date(today.getTime() - 10*24*60*60*1000);
+
+                db.events = [
+                    {
+                        id: 1001,
+                        name: 'Tech Summit 2026',
+                        description: 'Advanced Web Development with React, Node.js, and Cloud Technologies. Learn from industry experts.',
+                        date: nextWeek.toISOString().split('T')[0],
+                        location: 'Main Auditorium',
+                        category: 'technical',
+                        capacity: 200,
+                        createdBy: 2,
+                        status: 'approved'
+                    },
+                    {
+                        id: 1002,
+                        name: 'Cricket Tournament 2026',
+                        description: 'Inter-batch cricket tournament with exciting matches and trophies. T20 format.',
+                        date: twoWeeks.toISOString().split('T')[0],
+                        location: 'Sports Ground',
+                        category: 'sports',
+                        capacity: 100,
+                        createdBy: 2,
+                        status: 'approved'
+                    },
+                    {
+                        id: 1003,
+                        name: 'AI & Machine Learning Workshop',
+                        description: 'Hands-on workshop on ML algorithms, TensorFlow, and real-world applications.',
+                        date: threeWeeks.toISOString().split('T')[0],
+                        location: 'Lab Block - Room 201',
+                        category: 'technical',
+                        capacity: 80,
+                        createdBy: 2,
+                        status: 'approved'
+                    },
+                    {
+                        id: 1004,
+                        name: 'Annual Cultural Fest',
+                        description: 'Music, dance, drama performances showcasing diverse talents of our college. Food stalls and entertainment.',
+                        date: threeWeeks.toISOString().split('T')[0],
+                        location: 'Open Ground',
+                        category: 'cultural',
+                        capacity: 500,
+                        createdBy: 2,
+                        status: 'approved'
+                    },
+                    {
+                        id: 1005,
+                        name: 'Blockchain & Crypto Seminar',
+                        description: 'Understanding blockchain technology, cryptocurrency, and Web3 development.',
+                        date: nextWeek.toISOString().split('T')[0],
+                        location: 'Lecture Hall A',
+                        category: 'technical',
+                        capacity: 120,
+                        createdBy: 2,
+                        status: 'approved'
+                    },
+                    {
+                        id: 1006,
+                        name: 'Basketball Championship',
+                        description: 'Inter-college basketball tournament. Finals will be held on the dates mentioned.',
+                        date: twoWeeks.toISOString().split('T')[0],
+                        location: 'Indoor Court',
+                        category: 'sports',
+                        capacity: 80,
+                        createdBy: 2,
+                        status: 'approved'
+                    },
+                    {
+                        id: 1007,
+                        name: 'Career Guidance Session',
+                        description: 'Industry experts discussing job opportunities, internships, and startup culture.',
+                        date: nextWeek.toISOString().split('T')[0],
+                        location: 'Conference Hall',
+                        category: 'academic',
+                        capacity: 250,
+                        createdBy: 2,
+                        status: 'approved'
+                    },
+                    {
+                        id: 1008,
+                        name: 'Photography Exhibition',
+                        description: 'Student photography showcase. Themes: Nature, Architecture, Emotions.',
+                        date: twoWeeks.toISOString().split('T')[0],
+                        location: 'Art Gallery',
+                        category: 'cultural',
+                        capacity: 150,
+                        createdBy: 2,
+                        status: 'approved'
+                    },
+                    {
+                        id: 1009,
+                        name: 'Hackathon 2026',
+                        description: '24-hour coding marathon. Build innovative solutions. Prizes worth 50,000 rupees.',
+                        date: threeWeeks.toISOString().split('T')[0],
+                        location: 'Computer Lab',
+                        category: 'technical',
+                        capacity: 100,
+                        createdBy: 2,
+                        status: 'pending'
+                    },
+                    {
+                        id: 1010,
+                        name: 'Yoga & Wellness Day',
+                        description: 'Relaxation and wellness session for mental and physical health.',
+                        date: nextWeek.toISOString().split('T')[0],
+                        location: 'Gym Hall',
+                        category: 'other',
+                        capacity: 200,
+                        createdBy: 2,
+                        status: 'approved'
+                    },
+                    {
+                        id: 1011,
+                        name: 'Data Science Bootcamp',
+                        description: 'Learn Python, Data Analysis, Visualization, and Statistical Methods.',
+                        date: twoWeeks.toISOString().split('T')[0],
+                        location: 'Lab Block - Room 105',
+                        category: 'technical',
+                        capacity: 90,
+                        createdBy: 2,
+                        status: 'approved'
+                    },
+                    {
+                        id: 1012,
+                        name: 'Debate Championship',
+                        description: 'Inter-collegiate debate competition on current topics. Prizes included.',
+                        date: lastMonth.toISOString().split('T')[0],
+                        location: 'Auditorium',
+                        category: 'academic',
+                        capacity: 150,
+                        createdBy: 2,
+                        status: 'approved'
+                    }
+                ];
+
+                // Add sample registrations
+                db.registrations = [
+                    { id: 2001, userId: 3, eventId: 1001 },
+                    { id: 2002, userId: 3, eventId: 1002 },
+                    { id: 2003, userId: 4, eventId: 1001 },
+                    { id: 2004, userId: 4, eventId: 1003 },
+                    { id: 2005, userId: 5, eventId: 1005 },
+                    { id: 2006, userId: 5, eventId: 1004 },
+                    { id: 2007, userId: 3, eventId: 1012 }
+                ];
+
+                // Add sample ratings
+                db.ratings = [
+                    { id: 3001, userId: 3, eventId: 1012, rating: 5 },
+                    { id: 3002, userId: 4, eventId: 1012, rating: 4 }
+                ];
+
                 saveDB();
             }
 
