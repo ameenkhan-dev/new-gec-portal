@@ -71,6 +71,19 @@
         .filter-bar input:focus, .filter-bar select:focus { outline: none; border-color: #667eea; box-shadow: 0 0 10px rgba(102,126,234,0.3); }
         .clear-filters { background: #95a5a6; padding: 0.7rem 1.2rem; border: none; border-radius: 8px; color: white; cursor: pointer; font-weight: 600; transition: all 0.3s; }
         .clear-filters:hover { background: #7f8c8d; }
+        .settings-panel { background: rgba(255,255,255,0.98); padding: 2.5rem; border-radius: 16px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); backdrop-filter: blur(10px); animation: fadeIn 0.5s ease-out; }
+        .settings-tab { display: none; }
+        .settings-tab.active { display: block; }
+        .settings-tabs { display: flex; gap: 1rem; margin-bottom: 2rem; border-bottom: 2px solid #ecf0f1; }
+        .settings-tabs button { background: none; color: #667eea; border: none; padding: 1rem; cursor: pointer; font-size: 1rem; font-weight: 600; border-bottom: 3px solid transparent; transition: all 0.3s; }
+        .settings-tabs button.active { border-bottom-color: #667eea; color: #667eea; }
+        .settings-tabs button:hover { color: #764ba2; }
+        .setting-item { margin-bottom: 2rem; padding-bottom: 2rem; border-bottom: 1px solid #ecf0f1; }
+        .setting-item:last-child { border-bottom: none; }
+        .setting-label { font-weight: 600; color: #2c3e50; margin-bottom: 0.5rem; display: block; }
+        .setting-description { font-size: 0.9rem; color: #7f8c8d; margin-bottom: 1rem; }
+        .toggle-switch { display: flex; align-items: center; gap: 1rem; }
+        .toggle-switch input[type="checkbox"] { width: 50px; height: 30px; cursor: pointer; accent-color: #667eea; }
     </style>
 </head>
 <body>
@@ -78,6 +91,7 @@
         <h1>📅 GEC Event Portal</h1>
         <div style="display: flex; gap: 1rem; align-items: center;">
             <span id="userDisplay" style="font-weight: 600;"></span>
+            <button onclick="openSettings()" style="background: #3498db; width: auto; margin: 0;">⚙️ Settings</button>
             <button onclick="logout()">Logout</button>
         </div>
     </div>
@@ -188,6 +202,90 @@
             <button class="modal-close" onclick="closeEventModal()">✕</button>
             <h3 id="modalEventName"></h3>
             <div id="modalEventContent"></div>
+        </div>
+    </div>
+
+    <div id="settingsModal" class="modal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeSettings()">✕</button>
+            <h2>⚙️ Settings</h2>
+            
+            <div class="settings-tabs">
+                <button class="active" onclick="switchSettingsTab('profile')">👤 Profile</button>
+                <button onclick="switchSettingsTab('appearance')">🎨 Appearance</button>
+                <button onclick="switchSettingsTab('notifications')">🔔 Notifications</button>
+            </div>
+
+            <!-- Profile Tab -->
+            <div id="profile" class="settings-tab active">
+                <div class="setting-item">
+                    <label class="setting-label">Full Name</label>
+                    <input type="text" id="settingName" style="width: 100%; padding: 0.8rem; border: 2px solid #ecf0f1; border-radius: 8px;">
+                </div>
+                <div class="setting-item">
+                    <label class="setting-label">Email</label>
+                    <input type="email" id="settingEmail" style="width: 100%; padding: 0.8rem; border: 2px solid #ecf0f1; border-radius: 8px;" disabled>
+                    <p class="setting-description">Email cannot be changed</p>
+                </div>
+                <div class="setting-item">
+                    <label class="setting-label">Current Password</label>
+                    <input type="password" id="settingOldPass" placeholder="Enter current password" style="width: 100%; padding: 0.8rem; border: 2px solid #ecf0f1; border-radius: 8px;">
+                </div>
+                <div class="setting-item">
+                    <label class="setting-label">New Password</label>
+                    <input type="password" id="settingNewPass" placeholder="Leave blank to keep current" style="width: 100%; padding: 0.8rem; border: 2px solid #ecf0f1; border-radius: 8px;">
+                </div>
+                <button onclick="updateProfile()" style="width: auto; background: #27ae60;">💾 Save Changes</button>
+            </div>
+
+            <!-- Appearance Tab -->
+            <div id="appearance" class="settings-tab">
+                <div class="setting-item">
+                    <label class="setting-label">Dark Mode</label>
+                    <p class="setting-description">Switch to dark theme for easier viewing</p>
+                    <div class="toggle-switch">
+                        <input type="checkbox" id="darkModeToggle" onchange="toggleDarkMode()">
+                        <span>Dark theme</span>
+                    </div>
+                </div>
+                <div class="setting-item">
+                    <label class="setting-label">Font Size</label>
+                    <select id="fontSizeSelect" onchange="changeFontSize()" style="width: 100%; padding: 0.8rem; border: 2px solid #ecf0f1; border-radius: 8px;">
+                        <option value="small">Small</option>
+                        <option value="normal" selected>Normal</option>
+                        <option value="large">Large</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Notifications Tab -->
+            <div id="notifications" class="settings-tab">
+                <div class="setting-item">
+                    <label class="setting-label">Email Notifications</label>
+                    <p class="setting-description">Get alerts when events you're registered for are updated</p>
+                    <div class="toggle-switch">
+                        <input type="checkbox" id="emailNotif" checked>
+                        <span>Enable email alerts</span>
+                    </div>
+                </div>
+                <div class="setting-item">
+                    <label class="setting-label">Event Reminders</label>
+                    <p class="setting-description">Get reminded 1 day before events you're attending</p>
+                    <div class="toggle-switch">
+                        <input type="checkbox" id="remindersNotif" checked>
+                        <span>Enable reminders</span>
+                    </div>
+                </div>
+                <div class="setting-item">
+                    <label class="setting-label">Approval Updates</label>
+                    <p class="setting-description">Get notified when your event approvals are processed</p>
+                    <div class="toggle-switch">
+                        <input type="checkbox" id="approvalNotif" checked>
+                        <span>Enable approval alerts</span>
+                    </div>
+                </div>
+                <button onclick="saveNotifications()" style="width: auto; background: #27ae60;">💾 Save Preferences</button>
+            </div>
         </div>
     </div>
 
@@ -744,7 +842,107 @@
             filterStudentEvents();
         }
 
-        window.addEventListener('DOMContentLoaded', initDB);
+        function openSettings() {
+            document.getElementById('settingName').value = db.currentUser.name;
+            document.getElementById('settingEmail').value = db.currentUser.email;
+            document.getElementById('darkModeToggle').checked = localStorage.getItem('darkMode') === 'true';
+            document.getElementById('fontSizeSelect').value = localStorage.getItem('fontSize') || 'normal';
+            document.getElementById('emailNotif').checked = localStorage.getItem('emailNotif') !== 'false';
+            document.getElementById('remindersNotif').checked = localStorage.getItem('remindersNotif') !== 'false';
+            document.getElementById('approvalNotif').checked = localStorage.getItem('approvalNotif') !== 'false';
+            document.getElementById('settingsModal').classList.add('open');
+        }
+
+        function closeSettings() {
+            document.getElementById('settingsModal').classList.remove('open');
+        }
+
+        function switchSettingsTab(tab) {
+            document.querySelectorAll('.settings-tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.settings-tabs button').forEach(b => b.classList.remove('active'));
+            document.getElementById(tab).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        function updateProfile() {
+            const newName = document.getElementById('settingName').value;
+            const oldPass = document.getElementById('settingOldPass').value;
+            const newPass = document.getElementById('settingNewPass').value;
+
+            if (!oldPass) {
+                alert('❌ Enter current password to update');
+                return;
+            }
+
+            if (oldPass !== db.currentUser.password) {
+                alert('❌ Incorrect password');
+                return;
+            }
+
+            db.currentUser.name = newName;
+            if (newPass) {
+                db.currentUser.password = newPass;
+            }
+
+            const userIndex = db.users.findIndex(u => u.id === db.currentUser.id);
+            if (userIndex !== -1) {
+                db.users[userIndex] = db.currentUser;
+            }
+
+            saveDB();
+            localStorage.setItem('gec_portal_user', JSON.stringify(db.currentUser));
+            document.getElementById('userDisplay').textContent = `${db.currentUser.name} (${db.currentUser.role})`;
+            alert('✅ Profile updated!');
+            document.getElementById('settingOldPass').value = '';
+            document.getElementById('settingNewPass').value = '';
+        }
+
+        function toggleDarkMode() {
+            const isDark = document.getElementById('darkModeToggle').checked;
+            localStorage.setItem('darkMode', isDark);
+            applyDarkMode(isDark);
+        }
+
+        function applyDarkMode(isDark) {
+            if (isDark) {
+                document.body.style.backgroundColor = '#1a1a1a';
+                document.body.style.color = '#ffffff';
+                document.querySelectorAll('.dashboard, .auth-form, .modal-content, .event-card, .calendar').forEach(el => {
+                    el.style.backgroundColor = '#2a2a2a';
+                    el.style.color = '#ffffff';
+                });
+            } else {
+                document.body.style.backgroundColor = '';
+                document.body.style.color = '';
+                document.querySelectorAll('.dashboard, .auth-form, .modal-content, .event-card, .calendar').forEach(el => {
+                    el.style.backgroundColor = '';
+                    el.style.color = '';
+                });
+            }
+        }
+
+        function changeFontSize() {
+            const size = document.getElementById('fontSizeSelect').value;
+            localStorage.setItem('fontSize', size);
+            const sizeMap = { small: '14px', normal: '16px', large: '18px' };
+            document.body.style.fontSize = sizeMap[size];
+        }
+
+        function saveNotifications() {
+            localStorage.setItem('emailNotif', document.getElementById('emailNotif').checked);
+            localStorage.setItem('remindersNotif', document.getElementById('remindersNotif').checked);
+            localStorage.setItem('approvalNotif', document.getElementById('approvalNotif').checked);
+            alert('✅ Notification preferences saved!');
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            initDB();
+            const isDark = localStorage.getItem('darkMode') === 'true';
+            applyDarkMode(isDark);
+            const fontSize = localStorage.getItem('fontSize') || 'normal';
+            const sizeMap = { small: '14px', normal: '16px', large: '18px' };
+            document.body.style.fontSize = sizeMap[fontSize];
+        });
     </script>
 </body>
 </html>
