@@ -13,7 +13,7 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #f5f5f5;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
         }
 
@@ -24,11 +24,17 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
         }
 
         .navbar h1 {
             font-size: 1.5rem;
+        }
+
+        .navbar-right {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
         }
 
         .navbar button {
@@ -57,7 +63,7 @@
             background: white;
             padding: 2rem;
             border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
         }
 
         .auth-form h2 {
@@ -88,24 +94,30 @@
         .form-group input:focus,
         .form-group select:focus {
             outline: none;
-            border-color: #3498db;
-            box-shadow: 0 0 5px rgba(52, 152, 219, 0.3);
+            border-color: #667eea;
+            box-shadow: 0 0 5px rgba(102, 126, 234, 0.3);
         }
 
         button {
             width: 100%;
             padding: 0.75rem;
-            background: #3498db;
+            background: #667eea;
             color: white;
             border: none;
             border-radius: 4px;
             font-size: 1rem;
             cursor: pointer;
             margin-top: 1rem;
+            transition: background 0.3s;
         }
 
         button:hover {
-            background: #2980b9;
+            background: #5568d3;
+        }
+
+        button:disabled {
+            background: #95a5a6;
+            cursor: not-allowed;
         }
 
         .toggle-form {
@@ -115,7 +127,7 @@
         }
 
         .toggle-form a {
-            color: #3498db;
+            color: #667eea;
             cursor: pointer;
             text-decoration: underline;
         }
@@ -128,7 +140,7 @@
             background: white;
             padding: 2rem;
             border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
         }
 
         .dashboard h2 {
@@ -145,7 +157,7 @@
 
         .role-badge {
             display: inline-block;
-            background: #3498db;
+            background: #667eea;
             color: white;
             padding: 0.5rem 1rem;
             border-radius: 20px;
@@ -157,7 +169,7 @@
             margin-top: 2rem;
             padding: 1.5rem;
             background: #f9f9f9;
-            border-left: 4px solid #3498db;
+            border-left: 4px solid #667eea;
             border-radius: 4px;
         }
 
@@ -172,6 +184,7 @@
             margin-bottom: 1rem;
             border: 1px solid #ecf0f1;
             border-radius: 4px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
         }
 
         .event-card h4 {
@@ -179,10 +192,36 @@
             margin-bottom: 0.5rem;
         }
 
+        .event-card .status {
+            display: inline-block;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            margin: 0.5rem 0;
+        }
+
+        .status.approved {
+            background: #27ae60;
+            color: white;
+        }
+
+        .status.pending {
+            background: #f39c12;
+            color: white;
+        }
+
+        .status.rejected {
+            background: #e74c3c;
+            color: white;
+        }
+
         .event-card button {
             margin-top: 1rem;
             font-size: 0.9rem;
             padding: 0.5rem 1rem;
+            width: auto;
+            margin-right: 0.5rem;
         }
 
         .stats {
@@ -193,7 +232,7 @@
         }
 
         .stat-card {
-            background: #3498db;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             padding: 1.5rem;
             border-radius: 4px;
@@ -244,28 +283,40 @@
             background: #e74c3c;
         }
 
-        .alert-success {
-            background: #27ae60;
+        @media (max-width: 768px) {
+            .navbar {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .navbar-right {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .stats {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
 <body>
     <!-- Navbar -->
     <div id="navbar" class="navbar hidden">
-        <h1>GEC Event Portal</h1>
-        <div>
-            <span id="userDisplay" style="margin-right: 1rem;"></span>
+        <h1>📅 GEC Event Portal</h1>
+        <div class="navbar-right">
+            <span id="userDisplay"></span>
             <button onclick="logout()">Logout</button>
         </div>
     </div>
 
     <!-- Main Container -->
     <div class="container">
-        <!-- Auth Forms -->
+        <!-- Auth Section -->
         <div id="authSection">
             <!-- Login Form -->
             <div id="loginForm" class="auth-form">
-                <h2>Login</h2>
+                <h2>🔐 Login</h2>
                 <div id="loginError" class="alert alert-error hidden"></div>
                 <div class="form-group">
                     <label>Email</label>
@@ -283,7 +334,7 @@
 
             <!-- Registration Form -->
             <div id="registerForm" class="auth-form hidden">
-                <h2>Register</h2>
+                <h2>📝 Register</h2>
                 <div id="registerError" class="alert alert-error hidden"></div>
                 <div class="form-group">
                     <label>Full Name</label>
@@ -313,11 +364,11 @@
             </div>
         </div>
 
-        <!-- Dashboards (shown after login) -->
+        <!-- Dashboard Section -->
         <div id="dashboardSection" class="hidden">
-            <!-- Student Dashboard -->
+            <!-- STUDENT DASHBOARD -->
             <div id="studentDash" class="dashboard hidden">
-                <h2>Student Dashboard</h2>
+                <h2>👨‍🎓 Student Dashboard</h2>
                 <div class="user-info">
                     Welcome, <strong id="studentName"></strong>
                     <span class="role-badge">Student</span>
@@ -329,29 +380,29 @@
                         <div class="label">Events Registered</div>
                     </div>
                     <div class="stat-card">
-                        <div class="number" id="studentUpcoming">0</div>
-                        <div class="label">Upcoming Events</div>
+                        <div class="number" id="studentAvailableCount">0</div>
+                        <div class="label">Available Events</div>
                     </div>
                 </div>
 
                 <div class="section">
-                    <h3>My Registrations</h3>
+                    <h3>✅ My Registrations</h3>
                     <div id="studentRegistrations">
                         <p>No registrations yet.</p>
                     </div>
                 </div>
 
                 <div class="section">
-                    <h3>Available Events</h3>
+                    <h3>📌 Available Events</h3>
                     <div id="studentEvents">
-                        <p>No events available.</p>
+                        <p>No approved events available.</p>
                     </div>
                 </div>
             </div>
 
-            <!-- Club Leader Dashboard -->
+            <!-- CLUB LEADER DASHBOARD -->
             <div id="clubDash" class="dashboard hidden">
-                <h2>Club Leader Dashboard</h2>
+                <h2>🎯 Club Leader Dashboard</h2>
                 <div class="user-info">
                     Welcome, <strong id="clubName"></strong>
                     <span class="role-badge">Club Leader</span>
@@ -360,39 +411,54 @@
                 <div class="stats">
                     <div class="stat-card">
                         <div class="number" id="clubEventCount">0</div>
-                        <div class="label">Events Created</div>
+                        <div class="label">Total Events</div>
                     </div>
                     <div class="stat-card">
                         <div class="number" id="clubTotalReg">0</div>
                         <div class="label">Total Registrations</div>
                     </div>
+                    <div class="stat-card">
+                        <div class="number" id="clubPendingCount">0</div>
+                        <div class="label">Pending Approval</div>
+                    </div>
                 </div>
 
                 <div class="section">
-                    <h3>Create New Event</h3>
+                    <h3>➕ Draft New Event</h3>
                     <div class="form-group">
+                        <label>Event Name</label>
                         <input type="text" id="eventName" placeholder="Event Name">
                     </div>
                     <div class="form-group">
-                        <input type="text" id="eventDesc" placeholder="Description">
+                        <label>Description</label>
+                        <input type="text" id="eventDesc" placeholder="Event Description">
                     </div>
                     <div class="form-group">
+                        <label>Date</label>
                         <input type="date" id="eventDate">
                     </div>
-                    <button onclick="createEvent()">Create Event</button>
+                    <div class="form-group">
+                        <label>Location</label>
+                        <input type="text" id="eventLocation" placeholder="Event Location">
+                    </div>
+                    <div class="form-group">
+                        <label>Max Capacity</label>
+                        <input type="number" id="eventCapacity" placeholder="Max capacity" min="1">
+                    </div>
+                    <button onclick="draftEvent()">📤 Draft Event</button>
                 </div>
 
                 <div class="section">
-                    <h3>My Events</h3>
+                    <h3>📋 My Events</h3>
                     <div id="clubEvents">
                         <p>No events created yet.</p>
                     </div>
                 </div>
             </div>
 
-            <!-- Super Admin Dashboard -->
+            <!-- SUPER ADMIN DASHBOARD -->
             <div id="adminDash" class="dashboard hidden">
-                <h2>Super Admin Dashboard</h2>
+                <h2>⚙️ Super Admin Dashboard</h2>
                 <div class="user-info">
                     Welcome, <strong id="adminName"></strong>
                     <span class="role-badge">Super Admin</span>
@@ -411,10 +477,14 @@
                         <div class="number" id="adminRegCount">0</div>
                         <div class="label">Total Registrations</div>
                     </div>
+                    <div class="stat-card">
+                        <div class="number" id="adminPendingEventCount">0</div>
+                        <div class="label">Pending Approval</div>
+                    </div>
                 </div>
 
                 <div class="section">
-                    <h3>All Users</h3>
+                    <h3>👥 Manage Users</h3>
                     <table class="table">
                         <thead>
                             <tr>
@@ -431,18 +501,26 @@
                 </div>
 
                 <div class="section">
-                    <h3>All Events</h3>
+                    <h3>⏳ Pending Event Approvals</h3>
+                    <div id="adminPendingEvents">
+                        <p>No pending events for approval.</p>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h3>✔️ Approved Events</h3>
                     <table class="table">
                         <thead>
                             <tr>
                                 <th>Event Name</th>
                                 <th>Created By</th>
                                 <th>Date</th>
+                                <th>Location</th>
                                 <th>Registrations</th>
                             </tr>
                         </thead>
                         <tbody id="adminEventsList">
-                            <tr><td colspan="4">No events yet.</td></tr>
+                            <tr><td colspan="5">No events yet.</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -451,7 +529,6 @@
     </div>
 
     <script>
-        // Data store (localStorage)
         const db = {
             users: [],
             events: [],
@@ -459,19 +536,27 @@
             currentUser: null
         };
 
-        // Initialize from localStorage
         function initDB() {
             const saved = localStorage.getItem('gec_portal_db');
             if (saved) {
                 Object.assign(db, JSON.parse(saved));
             }
             db.currentUser = JSON.parse(localStorage.getItem('gec_portal_user'));
+            
+            if (db.users.length === 0) {
+                db.users = [
+                    { id: 1, name: 'Admin User', email: 'admin@gec.ac.in', password: 'admin123', role: 'super_admin' },
+                    { id: 2, name: 'Test Club', email: 'club@gec.ac.in', password: 'club123', role: 'club_leader' },
+                    { id: 3, name: 'Test Student', email: 'student@gec.ac.in', password: 'student123', role: 'student' }
+                ];
+                saveDB();
+            }
+
             if (db.currentUser) {
                 showDashboard();
             }
         }
 
-        // Save to localStorage
         function saveDB() {
             localStorage.setItem('gec_portal_db', JSON.stringify({
                 users: db.users,
@@ -480,27 +565,25 @@
             }));
         }
 
-        // Toggle between login and register forms
         function toggleForms() {
             document.getElementById('loginForm').classList.toggle('hidden');
             document.getElementById('registerForm').classList.toggle('hidden');
         }
 
-        // Handle Login
         function handleLogin() {
             const email = document.getElementById('loginEmail').value;
             const password = document.getElementById('loginPassword').value;
             const errorDiv = document.getElementById('loginError');
 
             if (!email || !password) {
-                errorDiv.textContent = 'Please fill all fields';
+                errorDiv.textContent = '❌ Please fill all fields';
                 errorDiv.classList.remove('hidden');
                 return;
             }
 
             const user = db.users.find(u => u.email === email && u.password === password);
             if (!user) {
-                errorDiv.textContent = 'Invalid email or password';
+                errorDiv.textContent = '❌ Invalid email or password';
                 errorDiv.classList.remove('hidden');
                 return;
             }
@@ -511,7 +594,6 @@
             showDashboard();
         }
 
-        // Handle Registration
         function handleRegister() {
             const name = document.getElementById('regName').value;
             const email = document.getElementById('regEmail').value;
@@ -520,19 +602,19 @@
             const errorDiv = document.getElementById('registerError');
 
             if (!name || !email || !password || !role) {
-                errorDiv.textContent = 'Please fill all fields';
+                errorDiv.textContent = '❌ Please fill all fields';
                 errorDiv.classList.remove('hidden');
                 return;
             }
 
             if (!email.endsWith('@gec.ac.in')) {
-                errorDiv.textContent = 'Email must be @gec.ac.in';
+                errorDiv.textContent = '❌ Email must be @gec.ac.in';
                 errorDiv.classList.remove('hidden');
                 return;
             }
 
             if (db.users.find(u => u.email === email)) {
-                errorDiv.textContent = 'Email already registered';
+                errorDiv.textContent = '❌ Email already registered';
                 errorDiv.classList.remove('hidden');
                 return;
             }
@@ -542,20 +624,16 @@
                 name,
                 email,
                 password,
-                role,
-                createdAt: new Date().toISOString()
+                role
             };
 
             db.users.push(newUser);
             saveDB();
-            errorDiv.classList.add('hidden');
-
             db.currentUser = newUser;
             localStorage.setItem('gec_portal_user', JSON.stringify(newUser));
             showDashboard();
         }
 
-        // Show Dashboard
         function showDashboard() {
             if (!db.currentUser) return;
 
@@ -563,10 +641,8 @@
             document.getElementById('dashboardSection').classList.remove('hidden');
             document.getElementById('navbar').classList.remove('hidden');
 
-            // Update navbar
             document.getElementById('userDisplay').textContent = `${db.currentUser.name} (${db.currentUser.role})`;
 
-            // Show appropriate dashboard
             document.getElementById('studentDash').classList.add('hidden');
             document.getElementById('clubDash').classList.add('hidden');
             document.getElementById('adminDash').classList.add('hidden');
@@ -580,7 +656,6 @@
             }
         }
 
-        // Student Dashboard
         function showStudentDash() {
             document.getElementById('studentDash').classList.remove('hidden');
             document.getElementById('studentName').textContent = db.currentUser.name;
@@ -588,42 +663,58 @@
             const myRegs = db.registrations.filter(r => r.userId === db.currentUser.id);
             document.getElementById('studentEventCount').textContent = myRegs.length;
 
+            const approvedEvents = db.events.filter(e => e.status === 'approved');
+            document.getElementById('studentAvailableCount').textContent = approvedEvents.length;
+
             const regDiv = document.getElementById('studentRegistrations');
             if (myRegs.length === 0) {
                 regDiv.innerHTML = '<p>No registrations yet.</p>';
             } else {
                 regDiv.innerHTML = myRegs.map(reg => {
                     const event = db.events.find(e => e.id === reg.eventId);
+                    const createdBy = db.users.find(u => u.id === event.createdBy);
                     return `<div class="event-card">
                         <h4>${event.name}</h4>
                         <p>${event.description}</p>
-                        <p><strong>Date:</strong> ${event.date}</p>
+                        <p><strong>📍 Location:</strong> ${event.location}</p>
+                        <p><strong>📅 Date:</strong> ${event.date}</p>
+                        <p><strong>👤 By:</strong> ${createdBy.name}</p>
+                        <button onclick="unregisterEvent(${event.id})" style="background:#e74c3c; width: auto;">Unregister</button>
                     </div>`;
                 }).join('');
             }
 
             const evDiv = document.getElementById('studentEvents');
-            if (db.events.length === 0) {
-                evDiv.innerHTML = '<p>No events available.</p>';
+            if (approvedEvents.length === 0) {
+                evDiv.innerHTML = '<p>No approved events available.</p>';
             } else {
-                evDiv.innerHTML = db.events.map(e => `
-                    <div class="event-card">
+                evDiv.innerHTML = approvedEvents.map(e => {
+                    const createdBy = db.users.find(u => u.id === e.createdBy);
+                    const regs = db.registrations.filter(r => r.eventId === e.id);
+                    const isRegistered = db.registrations.some(r => r.userId === db.currentUser.id && r.eventId === e.id);
+                    const isFull = regs.length >= e.capacity;
+                    return `<div class="event-card">
                         <h4>${e.name}</h4>
                         <p>${e.description}</p>
-                        <p><strong>Date:</strong> ${e.date}</p>
-                        <button onclick="registerEvent(${e.id})">Register</button>
-                    </div>
-                `).join('');
+                        <p><strong>📍 Location:</strong> ${e.location}</p>
+                        <p><strong>📅 Date:</strong> ${e.date}</p>
+                        <p><strong>👤 By:</strong> ${createdBy.name}</p>
+                        <p><strong>📊 Registrations:</strong> ${regs.length}/${e.capacity}</p>
+                        <button onclick="registerEvent(${e.id})" ${isRegistered || isFull ? 'disabled' : ''}>${isRegistered ? '✓ Registered' : (isFull ? 'Capacity Full' : 'Register Now')}</button>
+                    </div>`;
+                }).join('');
             }
         }
 
-        // Club Leader Dashboard
         function showClubDash() {
             document.getElementById('clubDash').classList.remove('hidden');
             document.getElementById('clubName').textContent = db.currentUser.name;
 
             const myEvents = db.events.filter(e => e.createdBy === db.currentUser.id);
+            const pendingEvents = myEvents.filter(e => e.status === 'pending');
+            
             document.getElementById('clubEventCount').textContent = myEvents.length;
+            document.getElementById('clubPendingCount').textContent = pendingEvents.length;
 
             const totalRegs = myEvents.reduce((sum, e) => 
                 sum + db.registrations.filter(r => r.eventId === e.id).length, 0
@@ -636,16 +727,21 @@
             } else {
                 evDiv.innerHTML = myEvents.map(e => {
                     const regs = db.registrations.filter(r => r.eventId === e.id);
+                    const statusClass = e.status === 'approved' ? 'approved' : (e.status === 'rejected' ? 'rejected' : 'pending');
                     return `<div class="event-card">
                         <h4>${e.name}</h4>
                         <p>${e.description}</p>
-                        <p><strong>Date:</strong> ${e.date} | <strong>Registrations:</strong> ${regs.length}</p>
+                        <p><strong>📍 Location:</strong> ${e.location}</p>
+                        <p><strong>📅 Date:</strong> ${e.date}</p>
+                        <p><strong>👥 Registrations:</strong> ${regs.length}/${e.capacity}</p>
+                        <span class="status ${statusClass}">${e.status.toUpperCase()}</span>
+                        ${e.status === 'rejected' ? `<p style="color: #e74c3c; margin-top: 0.5rem;"><strong>Reason:</strong> ${e.rejectionReason}</p>` : ''}
+                        <button onclick="deleteEvent(${e.id})" style="background:#e74c3c; width: auto;">Delete</button>
                     </div>`;
                 }).join('');
             }
         }
 
-        // Super Admin Dashboard
         function showAdminDash() {
             document.getElementById('adminDash').classList.remove('hidden');
             document.getElementById('adminName').textContent = db.currentUser.name;
@@ -653,48 +749,70 @@
             document.getElementById('adminUserCount').textContent = db.users.length;
             document.getElementById('adminEventCount').textContent = db.events.length;
             document.getElementById('adminRegCount').textContent = db.registrations.length;
+            document.getElementById('adminPendingEventCount').textContent = db.events.filter(e => e.status === 'pending').length;
 
-            // Users table
             const usersBody = document.getElementById('adminUsersList');
-            if (db.users.length === 0) {
-                usersBody.innerHTML = '<tr><td colspan="4">No users yet.</td></tr>';
+            usersBody.innerHTML = db.users.map(u => `
+                <tr>
+                    <td>${u.name}</td>
+                    <td>${u.email}</td>
+                    <td><strong>${u.role}</strong></td>
+                    <td><button onclick="deleteUser(${u.id})" style="background:#e74c3c; width: 70px; padding: 0.5rem;">Delete</button></td>
+                </tr>
+            `).join('');
+
+            const pendingEvents = db.events.filter(e => e.status === 'pending');
+            const pendingDiv = document.getElementById('adminPendingEvents');
+            if (pendingEvents.length === 0) {
+                pendingDiv.innerHTML = '<p>No pending events for approval.</p>';
             } else {
-                usersBody.innerHTML = db.users.map(u => `
-                    <tr>
-                        <td>${u.name}</td>
-                        <td>${u.email}</td>
-                        <td>${u.role}</td>
-                        <td><button onclick="deleteUser(${u.id})" style="background:#e74c3c; width: 80px;">Delete</button></td>
-                    </tr>
-                `).join('');
+                pendingDiv.innerHTML = pendingEvents.map(e => {
+                    const creator = db.users.find(u => u.id === e.createdBy);
+                    return `<div class="event-card">
+                        <h4>${e.name}</h4>
+                        <p>${e.description}</p>
+                        <p><strong>👤 By:</strong> ${creator.name} (${creator.email})</p>
+                        <p><strong>📍 Location:</strong> ${e.location}</p>
+                        <p><strong>📅 Date:</strong> ${e.date}</p>
+                        <p><strong>👥 Capacity:</strong> ${e.capacity}</p>
+                        <button onclick="approveEvent(${e.id})" style="background:#27ae60; width: auto;">✓ Approve</button>
+                        <button onclick="showRejectForm(${e.id})" style="background:#e74c3c; width: auto;">✗ Reject</button>
+                        <div id="rejectForm${e.id}" class="hidden" style="margin-top: 1rem;">
+                            <input type="text" id="rejectReason${e.id}" placeholder="Reason for rejection">
+                            <button onclick="rejectEvent(${e.id})" style="background:#e74c3c;">Submit Rejection</button>
+                        </div>
+                    </div>`;
+                }).join('');
             }
 
-            // Events table
             const eventsBody = document.getElementById('adminEventsList');
-            if (db.events.length === 0) {
-                eventsBody.innerHTML = '<tr><td colspan="4">No events yet.</td></tr>';
+            const approvedEvents = db.events.filter(e => e.status === 'approved');
+            if (approvedEvents.length === 0) {
+                eventsBody.innerHTML = '<tr><td colspan="5">No approved events yet.</td></tr>';
             } else {
-                eventsBody.innerHTML = db.events.map(e => {
+                eventsBody.innerHTML = approvedEvents.map(e => {
                     const creator = db.users.find(u => u.id === e.createdBy);
                     const regs = db.registrations.filter(r => r.eventId === e.id);
                     return `<tr>
                         <td>${e.name}</td>
-                        <td>${creator ? creator.name : 'Unknown'}</td>
+                        <td>${creator.name}</td>
                         <td>${e.date}</td>
-                        <td>${regs.length}</td>
+                        <td>${e.location}</td>
+                        <td>${regs.length}/${e.capacity}</td>
                     </tr>`;
                 }).join('');
             }
         }
 
-        // Create Event (Club Leader)
-        function createEvent() {
+        function draftEvent() {
             const name = document.getElementById('eventName').value;
             const desc = document.getElementById('eventDesc').value;
             const date = document.getElementById('eventDate').value;
+            const location = document.getElementById('eventLocation').value;
+            const capacity = parseInt(document.getElementById('eventCapacity').value);
 
-            if (!name || !desc || !date) {
-                alert('Please fill all fields');
+            if (!name || !desc || !date || !location || !capacity) {
+                alert('❌ Please fill all fields');
                 return;
             }
 
@@ -703,7 +821,10 @@
                 name,
                 description: desc,
                 date,
-                createdBy: db.currentUser.id
+                location,
+                capacity,
+                createdBy: db.currentUser.id,
+                status: 'pending'
             };
 
             db.events.push(event);
@@ -711,29 +832,85 @@
             document.getElementById('eventName').value = '';
             document.getElementById('eventDesc').value = '';
             document.getElementById('eventDate').value = '';
+            document.getElementById('eventLocation').value = '';
+            document.getElementById('eventCapacity').value = '';
+            alert('✅ Event drafted! Waiting for admin approval.');
             showClubDash();
         }
 
-        // Register for Event (Student)
+        function deleteEvent(eventId) {
+            if (confirm('Delete this event?')) {
+                db.events = db.events.filter(e => e.id !== eventId);
+                db.registrations = db.registrations.filter(r => r.eventId !== eventId);
+                saveDB();
+                showClubDash();
+            }
+        }
+
+        function approveEvent(eventId) {
+            const event = db.events.find(e => e.id === eventId);
+            if (event) {
+                event.status = 'approved';
+                saveDB();
+                alert('✅ Event approved!');
+                showAdminDash();
+            }
+        }
+
+        function showRejectForm(eventId) {
+            const form = document.getElementById(`rejectForm${eventId}`);
+            form.classList.toggle('hidden');
+        }
+
+        function rejectEvent(eventId) {
+            const reason = document.getElementById(`rejectReason${eventId}`).value;
+            if (!reason) {
+                alert('❌ Please enter rejection reason');
+                return;
+            }
+            const event = db.events.find(e => e.id === eventId);
+            if (event) {
+                event.status = 'rejected';
+                event.rejectionReason = reason;
+                saveDB();
+                alert('❌ Event rejected');
+                showAdminDash();
+            }
+        }
+
         function registerEvent(eventId) {
             if (db.registrations.find(r => r.userId === db.currentUser.id && r.eventId === eventId)) {
                 alert('Already registered for this event');
                 return;
             }
 
+            const event = db.events.find(e => e.id === eventId);
+            const eventRegs = db.registrations.filter(r => r.eventId === eventId);
+            
+            if (eventRegs.length >= event.capacity) {
+                alert('❌ Event capacity full');
+                return;
+            }
+
             db.registrations.push({
                 id: Date.now(),
                 userId: db.currentUser.id,
-                eventId: eventId,
-                registeredAt: new Date().toISOString()
+                eventId: eventId
             });
 
             saveDB();
+            alert('✅ Successfully registered!');
             showStudentDash();
-            alert('Successfully registered!');
         }
 
-        // Delete User (Admin)
+        function unregisterEvent(eventId) {
+            if (confirm('Unregister from this event?')) {
+                db.registrations = db.registrations.filter(r => !(r.userId === db.currentUser.id && r.eventId === eventId));
+                saveDB();
+                showStudentDash();
+            }
+        }
+
         function deleteUser(userId) {
             if (confirm('Delete this user?')) {
                 db.users = db.users.filter(u => u.id !== userId);
@@ -742,7 +919,6 @@
             }
         }
 
-        // Logout
         function logout() {
             db.currentUser = null;
             localStorage.removeItem('gec_portal_user');
@@ -755,7 +931,6 @@
             document.getElementById('loginPassword').value = '';
         }
 
-        // Initialize on page load
         window.addEventListener('DOMContentLoaded', initDB);
     </script>
 </body>
