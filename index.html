@@ -5,889 +5,219 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GEC Event Portal - Advanced</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(-45deg, #667eea, #764ba2, #f093fb, #4facfe);
-            background-size: 400% 400%;
-            animation: gradientShift 15s ease infinite;
-            min-height: 100vh;
-        }
-
-        @keyframes gradientShift {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-
-        .navbar {
-            background: #2c3e50;
-            color: white;
-            padding: 1rem 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-        }
-
-        .navbar h1 {
-            font-size: 1.5rem;
-        }
-
-        .navbar-right {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        .navbar button {
-            background: #e74c3c;
-            color: white;
-            border: none;
-            padding: 0.5rem 1rem;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .navbar button:hover {
-            background: #c0392b;
-            transform: scale(1.05);
-        }
-
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 2rem 1rem;
-        }
-
-        .auth-form {
-            max-width: 450px;
-            margin: 2rem auto;
-            background: rgba(255, 255, 255, 0.95);
-            padding: 2.5rem;
-            border-radius: 16px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            animation: slideInUp 0.6s ease-out;
-        }
-
-        @keyframes slideInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .auth-form h2 {
-            margin-bottom: 1.5rem;
-            color: #2c3e50;
-            font-size: 1.8rem;
-        }
-
-        .form-group {
-            margin-bottom: 1.2rem;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 0.5rem;
-            color: #2c3e50;
-            font-weight: 600;
-        }
-
-        .form-group input,
-        .form-group select {
-            width: 100%;
-            padding: 0.9rem;
-            border: 2px solid #ecf0f1;
-            border-radius: 8px;
-            font-size: 1rem;
-            transition: all 0.3s;
-        }
-
-        .form-group input:focus,
-        .form-group select:focus {
-            outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 10px rgba(102, 126, 234, 0.3);
-        }
-
-        button {
-            width: 100%;
-            padding: 0.9rem;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 1rem;
-            cursor: pointer;
-            margin-top: 1rem;
-            transition: all 0.3s ease;
-            font-weight: 600;
-            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
-        }
-
-        button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
-        }
-
-        button:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
-
-        .toggle-form {
-            text-align: center;
-            margin-top: 1.5rem;
-            color: #7f8c8d;
-        }
-
-        .toggle-form a {
-            color: #667eea;
-            cursor: pointer;
-            text-decoration: underline;
-            font-weight: 600;
-        }
-
-        .hidden {
-            display: none !important;
-        }
-
-        .dashboard {
-            background: rgba(255, 255, 255, 0.98);
-            padding: 2.5rem;
-            border-radius: 16px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
-            backdrop-filter: blur(10px);
-            animation: fadeIn 0.5s ease-out;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
-        .dashboard h2 {
-            color: #2c3e50;
-            margin-bottom: 1.5rem;
-            font-size: 2rem;
-        }
-
-        .user-info {
-            background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%);
-            padding: 1.2rem;
-            border-radius: 10px;
-            margin-bottom: 2rem;
-            border-left: 4px solid #667eea;
-        }
-
-        .role-badge {
-            display: inline-block;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 0.6rem 1.2rem;
-            border-radius: 25px;
-            font-size: 0.85rem;
-            margin-left: 1rem;
-            font-weight: 600;
-        }
-
-        .stats {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 2.5rem;
-        }
-
-        .stat-card {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 1.8rem;
-            border-radius: 12px;
-            text-align: center;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
-            cursor: pointer;
-        }
-
-        .stat-card:hover {
-            transform: translateY(-6px);
-            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.5);
-        }
-
-        .stat-card .number {
-            font-size: 2.5rem;
-            font-weight: bold;
-            margin-bottom: 0.5rem;
-        }
-
-        .stat-card .label {
-            font-size: 0.9rem;
-            opacity: 0.9;
-        }
-
-        .section {
-            margin-top: 2.5rem;
-            padding: 1.8rem;
-            background: linear-gradient(135deg, #f5f7fb 0%, #f9fafc 100%);
-            border-left: 4px solid #667eea;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-        }
-
-        .section h3 {
-            color: #2c3e50;
-            margin-bottom: 1.5rem;
-            font-size: 1.4rem;
-        }
-
-        .event-card {
-            background: white;
-            padding: 1.5rem;
-            margin-bottom: 1.2rem;
-            border: 1px solid #ecf0f1;
-            border-radius: 10px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-            transition: all 0.3s ease;
-        }
-
-        .event-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 8px 24px rgba(102, 126, 234, 0.2);
-            border-color: #667eea;
-        }
-
-        .event-card h4 {
-            color: #2c3e50;
-            margin-bottom: 0.8rem;
-            font-size: 1.2rem;
-        }
-
-        .event-card .meta {
-            display: flex;
-            gap: 1rem;
-            flex-wrap: wrap;
-            margin: 0.8rem 0;
-            font-size: 0.9rem;
-        }
-
-        .badge {
-            display: inline-block;
-            padding: 0.4rem 0.8rem;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: 600;
-        }
-
-        .badge.category {
-            background: #667eea20;
-            color: #667eea;
-        }
-
-        .badge.status-approved {
-            background: #27ae6020;
-            color: #27ae60;
-        }
-
-        .badge.status-pending {
-            background: #f39c1220;
-            color: #f39c12;
-        }
-
-        .badge.status-rejected {
-            background: #e74c3c20;
-            color: #e74c3c;
-        }
-
-        .calendar {
-            background: white;
-            border-radius: 12px;
-            padding: 1.5rem;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            margin-bottom: 2rem;
-        }
-
-        .calendar-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1.5rem;
-        }
-
-        .calendar-header button {
-            width: auto;
-            padding: 0.5rem 1rem;
-            font-size: 0.9rem;
-        }
-
-        .calendar-grid {
-            display: grid;
-            grid-template-columns: repeat(7, 1fr);
-            gap: 0.5rem;
-            margin-top: 1rem;
-        }
-
-        .calendar-day {
-            aspect-ratio: 1;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            border-radius: 8px;
-            border: 2px solid #ecf0f1;
-            cursor: pointer;
-            transition: all 0.3s;
-            font-size: 0.85rem;
-            font-weight: 600;
-        }
-
-        .calendar-day:hover {
-            background: #667eea15;
-            border-color: #667eea;
-        }
-
-        .calendar-day.today {
-            background: #667eea;
-            color: white;
-            border-color: #667eea;
-        }
-
-        .calendar-day.has-event {
-            background: #f093fb15;
-            border-color: #f093fb;
-        }
-
-        .table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 1rem;
-        }
-
-        .table th {
-            background: #2c3e50;
-            color: white;
-            padding: 1rem;
-            text-align: left;
-            font-weight: 600;
-        }
-
-        .table td {
-            padding: 0.9rem 1rem;
-            border-bottom: 1px solid #ecf0f1;
-        }
-
-        .table tr:hover {
-            background: #f9f9f9;
-        }
-
-        .rating {
-            display: flex;
-            gap: 0.3rem;
-            cursor: pointer;
-        }
-
-        .star {
-            font-size: 1.5rem;
-            color: #bdc3c7;
-            transition: all 0.2s;
-        }
-
-        .star:hover,
-        .star.filled {
-            color: #f39c12;
-            transform: scale(1.1);
-        }
-
-        .inline-form {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .inline-form input,
-        .inline-form select {
-            padding: 0.75rem;
-            border: 2px solid #ecf0f1;
-            border-radius: 8px;
-            font-size: 0.9rem;
-        }
-
-        .inline-form button {
-            margin-top: 0;
-        }
-
-        .alert {
-            padding: 1rem;
-            margin-bottom: 1rem;
-            border-radius: 8px;
-            color: white;
-            animation: slideInDown 0.4s ease-out;
-        }
-
-        @keyframes slideInDown {
-            from {
-                opacity: 0;
-                transform: translateY(-20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .alert-error {
-            background: #e74c3c;
-        }
-
-        .alert-success {
-            background: #27ae60;
-        }
-
-        @media (max-width: 768px) {
-            .stats {
-                grid-template-columns: 1fr;
-            }
-
-            .calendar-grid {
-                gap: 0.3rem;
-            }
-
-            .calendar-day {
-                font-size: 0.7rem;
-            }
-
-            .inline-form {
-                grid-template-columns: 1fr;
-            }
-
-            .navbar {
-                flex-direction: column;
-                gap: 1rem;
-            }
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', sans-serif; background: linear-gradient(-45deg, #667eea, #764ba2, #f093fb, #4facfe); background-size: 400% 400%; animation: gradientShift 15s ease infinite; min-height: 100vh; }
+        @keyframes gradientShift { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+        .navbar { background: #2c3e50; color: white; padding: 1rem 2rem; display: flex; justify-content: space-between; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
+        .navbar h1 { font-size: 1.5rem; }
+        .navbar button { background: #e74c3c; color: white; border: none; padding: 0.5rem 1rem; border-radius: 6px; cursor: pointer; transition: all 0.3s; }
+        .navbar button:hover { background: #c0392b; }
+        .container { max-width: 1400px; margin: 0 auto; padding: 2rem 1rem; }
+        .auth-form { max-width: 450px; margin: 2rem auto; background: rgba(255,255,255,0.95); padding: 2.5rem; border-radius: 16px; box-shadow: 0 10px 40px rgba(0,0,0,0.3); backdrop-filter: blur(10px); animation: slideInUp 0.6s ease-out; }
+        @keyframes slideInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; } }
+        .auth-form h2 { margin-bottom: 1.5rem; color: #2c3e50; font-size: 1.8rem; }
+        .form-group { margin-bottom: 1.2rem; }
+        .form-group label { display: block; margin-bottom: 0.5rem; color: #2c3e50; font-weight: 600; }
+        .form-group input, .form-group select { width: 100%; padding: 0.9rem; border: 2px solid #ecf0f1; border-radius: 8px; font-size: 1rem; transition: all 0.3s; }
+        .form-group input:focus, .form-group select:focus { outline: none; border-color: #667eea; box-shadow: 0 0 10px rgba(102,126,234,0.3); }
+        button { width: 100%; padding: 0.9rem; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 8px; font-size: 1rem; cursor: pointer; margin-top: 1rem; transition: all 0.3s; font-weight: 600; box-shadow: 0 4px 15px rgba(102,126,234,0.4); }
+        button:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(102,126,234,0.6); }
+        button:disabled { opacity: 0.6; cursor: not-allowed; }
+        .hidden { display: none !important; }
+        .dashboard { background: rgba(255,255,255,0.98); padding: 2.5rem; border-radius: 16px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); backdrop-filter: blur(10px); animation: fadeIn 0.5s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .dashboard h2 { color: #2c3e50; margin-bottom: 1.5rem; font-size: 2rem; }
+        .user-info { background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%); padding: 1.2rem; border-radius: 10px; margin-bottom: 2rem; border-left: 4px solid #667eea; }
+        .role-badge { display: inline-block; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 0.6rem 1.2rem; border-radius: 25px; font-size: 0.85rem; margin-left: 1rem; font-weight: 600; }
+        .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1.5rem; margin-bottom: 2.5rem; }
+        .stat-card { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 1.8rem; border-radius: 12px; text-align: center; transition: all 0.3s; box-shadow: 0 4px 15px rgba(102,126,234,0.3); }
+        .stat-card:hover { transform: translateY(-6px); box-shadow: 0 8px 25px rgba(102,126,234,0.5); }
+        .stat-card .number { font-size: 2.5rem; font-weight: bold; margin-bottom: 0.5rem; }
+        .section { margin-top: 2.5rem; padding: 1.8rem; background: linear-gradient(135deg, #f5f7fb 0%, #f9fafc 100%); border-left: 4px solid #667eea; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        .section h3 { color: #2c3e50; margin-bottom: 1.5rem; font-size: 1.4rem; }
+        .event-card { background: white; padding: 1.5rem; margin-bottom: 1.2rem; border: 1px solid #ecf0f1; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); transition: all 0.3s; }
+        .event-card:hover { transform: translateY(-4px); box-shadow: 0 8px 24px rgba(102,126,234,0.2); border-color: #667eea; }
+        .event-card h4 { color: #2c3e50; margin-bottom: 0.8rem; font-size: 1.2rem; }
+        .meta { display: flex; gap: 1rem; flex-wrap: wrap; margin: 0.8rem 0; font-size: 0.9rem; }
+        .badge { display: inline-block; padding: 0.4rem 0.8rem; border-radius: 20px; font-size: 0.8rem; font-weight: 600; }
+        .badge.category { background: #667eea20; color: #667eea; }
+        .badge.status-approved { background: #27ae6020; color: #27ae60; }
+        .badge.status-pending { background: #f39c1220; color: #f39c12; }
+        .calendar { background: white; border-radius: 12px; padding: 1.5rem; box-shadow: 0 4px 15px rgba(0,0,0,0.1); margin-bottom: 2rem; }
+        .calendar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
+        .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 0.5rem; margin-top: 1rem; }
+        .calendar-day { aspect-ratio: 1; display: flex; align-items: center; justify-content: center; border-radius: 8px; border: 2px solid #ecf0f1; cursor: pointer; transition: all 0.3s; font-size: 0.85rem; font-weight: 600; }
+        .calendar-day:hover { background: #667eea15; border-color: #667eea; }
+        .calendar-day.today { background: #667eea; color: white; border-color: #667eea; }
+        .calendar-day.has-event { background: #f093fb15; border-color: #f093fb; }
+        .table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
+        .table th { background: #2c3e50; color: white; padding: 1rem; text-align: left; font-weight: 600; }
+        .table td { padding: 0.9rem 1rem; border-bottom: 1px solid #ecf0f1; }
+        .table tr:hover { background: #f9f9f9; }
+        .rating { display: flex; gap: 0.3rem; cursor: pointer; margin: 1rem 0; }
+        .star { font-size: 1.5rem; color: #bdc3c7; transition: all 0.2s; }
+        .star:hover, .star.filled { color: #f39c12; transform: scale(1.1); }
+        .alert { padding: 1rem; margin-bottom: 1rem; border-radius: 8px; color: white; animation: slideInDown 0.4s ease-out; }
+        @keyframes slideInDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; } }
+        .alert-error { background: #e74c3c; }
+        .alert-success { background: #27ae60; }
     </style>
 </head>
 <body>
-    <!-- Navbar -->
     <div id="navbar" class="navbar hidden">
         <h1>📅 GEC Event Portal</h1>
-        <div class="navbar-right">
+        <div style="display: flex; gap: 1rem; align-items: center;">
             <span id="userDisplay" style="font-weight: 600;"></span>
             <button onclick="logout()">Logout</button>
         </div>
     </div>
 
-    <!-- Main Container -->
     <div class="container">
-        <!-- Auth Section -->
         <div id="authSection">
-            <!-- Login Form -->
             <div id="loginForm" class="auth-form">
                 <h2>🔐 Login</h2>
                 <div id="loginError" class="alert alert-error hidden"></div>
-                <div class="form-group">
-                    <label>Email</label>
-                    <input type="email" id="loginEmail" placeholder="your@gec.ac.in">
-                </div>
-                <div class="form-group">
-                    <label>Password</label>
-                    <input type="password" id="loginPassword" placeholder="Password">
-                </div>
+                <div class="form-group"><label>Email</label><input type="email" id="loginEmail" placeholder="your@gec.ac.in"></div>
+                <div class="form-group"><label>Password</label><input type="password" id="loginPassword" placeholder="Password"></div>
                 <button onclick="handleLogin()">Login</button>
-                <div class="toggle-form">
-                    Don't have an account? <a onclick="toggleForms()">Register</a>
-                </div>
+                <div style="text-align: center; margin-top: 1.5rem; color: #7f8c8d;">Don't have an account? <a onclick="toggleForms()" style="color: #667eea; cursor: pointer; text-decoration: underline;">Register</a></div>
             </div>
 
-            <!-- Registration Form -->
             <div id="registerForm" class="auth-form hidden">
                 <h2>📝 Register</h2>
                 <div id="registerError" class="alert alert-error hidden"></div>
-                <div class="form-group">
-                    <label>Full Name</label>
-                    <input type="text" id="regName" placeholder="Your Name">
-                </div>
-                <div class="form-group">
-                    <label>Email</label>
-                    <input type="email" id="regEmail" placeholder="your@gec.ac.in">
-                </div>
-                <div class="form-group">
-                    <label>Password</label>
-                    <input type="password" id="regPassword" placeholder="Password">
-                </div>
-                <div class="form-group">
-                    <label>Role</label>
-                    <select id="regRole">
-                        <option value="">Select Role</option>
-                        <option value="student">Student</option>
-                        <option value="club_leader">Club Leader</option>
-                        <option value="super_admin">Super Admin</option>
-                    </select>
-                </div>
+                <div class="form-group"><label>Full Name</label><input type="text" id="regName" placeholder="Your Name"></div>
+                <div class="form-group"><label>Email</label><input type="email" id="regEmail" placeholder="your@gec.ac.in"></div>
+                <div class="form-group"><label>Password</label><input type="password" id="regPassword" placeholder="Password"></div>
+                <div class="form-group"><label>Role</label><select id="regRole"><option value="">Select Role</option><option value="student">Student</option><option value="club_leader">Club Leader</option><option value="super_admin">Super Admin</option></select></div>
                 <button onclick="handleRegister()">Register</button>
-                <div class="toggle-form">
-                    Have an account? <a onclick="toggleForms()">Login</a>
-                </div>
+                <div style="text-align: center; margin-top: 1.5rem; color: #7f8c8d;">Have an account? <a onclick="toggleForms()" style="color: #667eea; cursor: pointer; text-decoration: underline;">Login</a></div>
             </div>
         </div>
 
-        <!-- Dashboard Section -->
         <div id="dashboardSection" class="hidden">
-            <!-- STUDENT DASHBOARD -->
             <div id="studentDash" class="dashboard hidden">
                 <h2>👨‍🎓 Student Portal</h2>
-                <div class="user-info">
-                    Welcome, <strong id="studentName"></strong>
-                    <span class="role-badge">Student</span>
-                </div>
-
+                <div class="user-info">Welcome, <strong id="studentName"></strong> <span class="role-badge">Student</span></div>
                 <div class="stats">
-                    <div class="stat-card">
-                        <div class="number" id="studentEventCount">0</div>
-                        <div class="label">Registered</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="number" id="studentAvailableCount">0</div>
-                        <div class="label">Available</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="number" id="studentAttendedCount">0</div>
-                        <div class="label">Attended</div>
-                    </div>
+                    <div class="stat-card"><div class="number" id="studentEventCount">0</div><div class="label">Registered</div></div>
+                    <div class="stat-card"><div class="number" id="studentAvailableCount">0</div><div class="label">Available</div></div>
+                    <div class="stat-card"><div class="number" id="studentAttendedCount">0</div><div class="label">Attended</div></div>
                 </div>
-
-                <!-- Event Calendar -->
-                <div class="section">
-                    <h3>📅 Event Calendar</h3>
-                    <div class="calendar" id="studentCalendar"></div>
-                </div>
-
-                <div class="section">
-                    <h3>📌 My Registrations</h3>
-                    <div id="studentRegistrations"><p>No registrations yet.</p></div>
-                </div>
-
-                <div class="section">
-                    <h3>🎯 Available Events</h3>
-                    <div id="studentEvents"><p>No approved events available.</p></div>
-                </div>
+                <div class="section"><h3>📅 Event Calendar</h3><div class="calendar" id="studentCalendar"></div></div>
+                <div class="section"><h3>📌 My Registrations</h3><div id="studentRegistrations"><p>No registrations yet.</p></div></div>
+                <div class="section"><h3>🎯 Available Events</h3><div id="studentEvents"><p>No approved events available.</p></div></div>
             </div>
 
-            <!-- CLUB LEADER DASHBOARD -->
             <div id="clubDash" class="dashboard hidden">
                 <h2>🎯 Club Dashboard</h2>
-                <div class="user-info">
-                    Welcome, <strong id="clubName"></strong>
-                    <span class="role-badge">Club Leader</span>
-                </div>
-
+                <div class="user-info">Welcome, <strong id="clubName"></strong> <span class="role-badge">Club Leader</span></div>
                 <div class="stats">
-                    <div class="stat-card">
-                        <div class="number" id="clubEventCount">0</div>
-                        <div class="label">Events</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="number" id="clubTotalReg">0</div>
-                        <div class="label">Registrations</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="number" id="clubPendingCount">0</div>
-                        <div class="label">Pending</div>
-                    </div>
+                    <div class="stat-card"><div class="number" id="clubEventCount">0</div><div class="label">Events</div></div>
+                    <div class="stat-card"><div class="number" id="clubTotalReg">0</div><div class="label">Registrations</div></div>
+                    <div class="stat-card"><div class="number" id="clubPendingCount">0</div><div class="label">Pending</div></div>
                 </div>
-
                 <div class="section">
                     <h3>➕ Create Event</h3>
-                    <div class="inline-form">
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 1.5rem;">
                         <input type="text" id="eventName" placeholder="Event Name">
                         <input type="text" id="eventDesc" placeholder="Description">
-                        <select id="eventCategory">
-                            <option value="">Category</option>
-                            <option value="technical">Technical</option>
-                            <option value="sports">Sports</option>
-                            <option value="cultural">Cultural</option>
-                            <option value="academic">Academic</option>
-                            <option value="other">Other</option>
-                        </select>
-                    </div>
-                    <div class="inline-form">
+                        <select id="eventCategory"><option value="">Category</option><option value="technical">Technical</option><option value="sports">Sports</option><option value="cultural">Cultural</option><option value="academic">Academic</option><option value="other">Other</option></select>
                         <input type="date" id="eventDate">
                         <input type="text" id="eventLocation" placeholder="Location">
                         <input type="number" id="eventCapacity" placeholder="Capacity" min="1">
                     </div>
                     <button onclick="draftEvent()">📤 Draft Event</button>
                 </div>
-
-                <div class="section">
-                    <h3>📋 My Events</h3>
-                    <div id="clubEvents"><p>No events created.</p></div>
-                </div>
+                <div class="section"><h3>📋 My Events</h3><div id="clubEvents"><p>No events created.</p></div></div>
             </div>
 
-            <!-- SUPER ADMIN DASHBOARD -->
             <div id="adminDash" class="dashboard hidden">
                 <h2>⚙️ Admin Dashboard</h2>
-                <div class="user-info">
-                    Welcome, <strong id="adminName"></strong>
-                    <span class="role-badge">Super Admin</span>
-                </div>
-
+                <div class="user-info">Welcome, <strong id="adminName"></strong> <span class="role-badge">Super Admin</span></div>
                 <div class="stats">
-                    <div class="stat-card">
-                        <div class="number" id="adminUserCount">0</div>
-                        <div class="label">Users</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="number" id="adminEventCount">0</div>
-                        <div class="label">Events</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="number" id="adminRegCount">0</div>
-                        <div class="label">Registrations</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="number" id="adminPendingEventCount">0</div>
-                        <div class="label">Pending</div>
-                    </div>
+                    <div class="stat-card"><div class="number" id="adminUserCount">0</div><div class="label">Users</div></div>
+                    <div class="stat-card"><div class="number" id="adminEventCount">0</div><div class="label">Events</div></div>
+                    <div class="stat-card"><div class="number" id="adminRegCount">0</div><div class="label">Registrations</div></div>
+                    <div class="stat-card"><div class="number" id="adminPendingEventCount">0</div><div class="label">Pending</div></div>
                 </div>
-
                 <div class="section">
                     <h3>👥 Manage Users</h3>
-                    <table class="table">
-                        <thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Action</th></tr></thead>
-                        <tbody id="adminUsersList"><tr><td colspan="4">No users.</td></tr></tbody>
-                    </table>
+                    <table class="table"><thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Action</th></tr></thead><tbody id="adminUsersList"><tr><td colspan="4">No users.</td></tr></tbody></table>
                 </div>
-
                 <div class="section">
                     <h3>⏳ Pending Approvals</h3>
                     <div id="adminPendingEvents"><p>No pending events.</p></div>
                 </div>
-
                 <div class="section">
                     <h3>✔️ All Events</h3>
-                    <button onclick="exportRegistrations()" style="width: auto; margin-bottom: 1rem;">📊 Export Registrations</button>
-                    <table class="table">
-                        <thead><tr><th>Event</th><th>By</th><th>Date</th><th>Category</th><th>Registrations</th><th>Status</th></tr></thead>
-                        <tbody id="adminEventsList"><tr><td colspan="6">No events.</td></tr></tbody>
-                    </table>
+                    <button onclick="exportRegistrations()" style="width: auto; margin-bottom: 1rem;">📊 Export Registrations CSV</button>
+                    <table class="table"><thead><tr><th>Event</th><th>By</th><th>Date</th><th>Category</th><th>Registrations</th><th>Status</th></tr></thead><tbody id="adminEventsList"><tr><td colspan="6">No events.</td></tr></tbody></table>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        const db = {
-            users: [],
-            events: [],
-            registrations: [],
-            ratings: [],
-            currentUser: null
-        };
+        // FORCE CLEAR OLD DATA
+        localStorage.clear();
+        
+        const db = { users: [], events: [], registrations: [], ratings: [], currentUser: null };
 
         function initDB() {
-            const saved = localStorage.getItem('gec_portal_db');
-            if (saved) {
-                Object.assign(db, JSON.parse(saved));
-            }
+            const today = new Date();
+            const getDate = (daysOffset) => new Date(today.getTime() + daysOffset*24*60*60*1000).toISOString().split('T')[0];
+
+            // Sample users
+            db.users = [
+                { id: 1, name: 'Admin User', email: 'admin@gec.ac.in', password: 'admin123', role: 'super_admin' },
+                { id: 2, name: 'Tech Club', email: 'club@gec.ac.in', password: 'club123', role: 'club_leader' },
+                { id: 3, name: 'Test Student', email: 'student@gec.ac.in', password: 'student123', role: 'student' },
+                { id: 4, name: 'Rohit Sharma', email: 'rohit@gec.ac.in', password: 'pass123', role: 'student' },
+                { id: 5, name: 'Priya Singh', email: 'priya@gec.ac.in', password: 'pass123', role: 'student' },
+                { id: 6, name: 'Arjun Kumar', email: 'arjun@gec.ac.in', password: 'pass123', role: 'student' },
+                { id: 7, name: 'Sarah Khan', email: 'sarah@gec.ac.in', password: 'pass123', role: 'student' }
+            ];
+
+            // Sample events with proper dates
+            db.events = [
+                { id: 1001, name: 'Tech Summit 2026', description: 'Advanced Web Development with React, Node.js. Learn from industry experts.', date: getDate(7), location: 'Main Auditorium', category: 'technical', capacity: 200, createdBy: 2, status: 'approved' },
+                { id: 1002, name: 'Cricket Tournament 2026', description: 'Inter-batch cricket tournament. T20 format. Prizes: 10,000 rupees.', date: getDate(14), location: 'Sports Ground', category: 'sports', capacity: 100, createdBy: 2, status: 'approved' },
+                { id: 1003, name: 'AI & Machine Learning', description: 'Hands-on workshop on ML algorithms, TensorFlow. Certificate provided.', date: getDate(21), location: 'Lab Block 201', category: 'technical', capacity: 80, createdBy: 2, status: 'approved' },
+                { id: 1004, name: 'Annual Cultural Fest', description: 'Music, dance, drama performances. Food stalls & live entertainment.', date: getDate(21), location: 'Open Ground', category: 'cultural', capacity: 500, createdBy: 2, status: 'approved' },
+                { id: 1005, name: 'Blockchain & Crypto', description: 'Understanding blockchain, cryptocurrency trading, Web3 development.', date: getDate(7), location: 'Lecture Hall A', category: 'technical', capacity: 120, createdBy: 2, status: 'approved' },
+                { id: 1006, name: 'Basketball Championship', description: 'Inter-college basketball tournament. Trophy & medals for winners.', date: getDate(14), location: 'Indoor Court', category: 'sports', capacity: 80, createdBy: 2, status: 'approved' },
+                { id: 1007, name: 'Career Guidance Session', description: 'Industry experts on job opportunities, internships, startups.', date: getDate(7), location: 'Conference Hall', category: 'academic', capacity: 250, createdBy: 2, status: 'approved' },
+                { id: 1008, name: 'Photography Exhibition', description: 'Student photography showcase. Themes: Nature, Architecture, Emotions.', date: getDate(14), location: 'Art Gallery', category: 'cultural', capacity: 150, createdBy: 2, status: 'approved' },
+                { id: 1009, name: 'Hackathon 2026', description: '24-hour coding marathon. Build solutions. Prizes: 50,000 rupees.', date: getDate(21), location: 'Computer Lab', category: 'technical', capacity: 100, createdBy: 2, status: 'pending' },
+                { id: 1010, name: 'Yoga & Wellness', description: 'Relaxation session for health. Meditation & breathing exercises.', date: getDate(7), location: 'Gym Hall', category: 'other', capacity: 200, createdBy: 2, status: 'approved' },
+                { id: 1011, name: 'Data Science Bootcamp', description: 'Learn Python, Data Analysis, Visualization & Statistical Methods.', date: getDate(14), location: 'Lab Block 105', category: 'technical', capacity: 90, createdBy: 2, status: 'approved' },
+                { id: 1012, name: 'Debate Championship', description: 'Inter-collegiate debate on current topics. Prizes included.', date: getDate(-10), location: 'Auditorium', category: 'academic', capacity: 150, createdBy: 2, status: 'approved' }
+            ];
+
+            // Sample registrations (many students registered)
+            db.registrations = [
+                { id: 2001, userId: 3, eventId: 1001 }, { id: 2002, userId: 3, eventId: 1002 }, { id: 2003, userId: 3, eventId: 1012 },
+                { id: 2004, userId: 4, eventId: 1001 }, { id: 2005, userId: 4, eventId: 1003 }, { id: 2006, userId: 4, eventId: 1012 },
+                { id: 2007, userId: 5, eventId: 1005 }, { id: 2008, userId: 5, eventId: 1004 },
+                { id: 2009, userId: 6, eventId: 1002 }, { id: 2010, userId: 6, eventId: 1006 },
+                { id: 2011, userId: 7, eventId: 1007 }, { id: 2012, userId: 7, eventId: 1010 }
+            ];
+
+            // Sample ratings
+            db.ratings = [
+                { id: 3001, userId: 3, eventId: 1012, rating: 5 },
+                { id: 3002, userId: 4, eventId: 1012, rating: 4 },
+                { id: 3003, userId: 3, eventId: 1012, rating: 5 }
+            ];
+
+            saveDB();
             db.currentUser = JSON.parse(localStorage.getItem('gec_portal_user'));
-            
-            if (db.users.length === 0) {
-                db.users = [
-                    { id: 1, name: 'Admin User', email: 'admin@gec.ac.in', password: 'admin123', role: 'super_admin' },
-                    { id: 2, name: 'Tech Club', email: 'club@gec.ac.in', password: 'club123', role: 'club_leader' },
-                    { id: 3, name: 'Test Student', email: 'student@gec.ac.in', password: 'student123', role: 'student' },
-                    { id: 4, name: 'Rohit Sharma', email: 'rohit@gec.ac.in', password: 'pass123', role: 'student' },
-                    { id: 5, name: 'Priya Singh', email: 'priya@gec.ac.in', password: 'pass123', role: 'student' }
-                ];
-
-                // Add sample events
-                const today = new Date();
-                const nextWeek = new Date(today.getTime() + 7*24*60*60*1000);
-                const twoWeeks = new Date(today.getTime() + 14*24*60*60*1000);
-                const threeWeeks = new Date(today.getTime() + 21*24*60*60*1000);
-                const lastMonth = new Date(today.getTime() - 10*24*60*60*1000);
-
-                db.events = [
-                    {
-                        id: 1001,
-                        name: 'Tech Summit 2026',
-                        description: 'Advanced Web Development with React, Node.js, and Cloud Technologies. Learn from industry experts.',
-                        date: nextWeek.toISOString().split('T')[0],
-                        location: 'Main Auditorium',
-                        category: 'technical',
-                        capacity: 200,
-                        createdBy: 2,
-                        status: 'approved'
-                    },
-                    {
-                        id: 1002,
-                        name: 'Cricket Tournament 2026',
-                        description: 'Inter-batch cricket tournament with exciting matches and trophies. T20 format.',
-                        date: twoWeeks.toISOString().split('T')[0],
-                        location: 'Sports Ground',
-                        category: 'sports',
-                        capacity: 100,
-                        createdBy: 2,
-                        status: 'approved'
-                    },
-                    {
-                        id: 1003,
-                        name: 'AI & Machine Learning Workshop',
-                        description: 'Hands-on workshop on ML algorithms, TensorFlow, and real-world applications.',
-                        date: threeWeeks.toISOString().split('T')[0],
-                        location: 'Lab Block - Room 201',
-                        category: 'technical',
-                        capacity: 80,
-                        createdBy: 2,
-                        status: 'approved'
-                    },
-                    {
-                        id: 1004,
-                        name: 'Annual Cultural Fest',
-                        description: 'Music, dance, drama performances showcasing diverse talents of our college. Food stalls and entertainment.',
-                        date: threeWeeks.toISOString().split('T')[0],
-                        location: 'Open Ground',
-                        category: 'cultural',
-                        capacity: 500,
-                        createdBy: 2,
-                        status: 'approved'
-                    },
-                    {
-                        id: 1005,
-                        name: 'Blockchain & Crypto Seminar',
-                        description: 'Understanding blockchain technology, cryptocurrency, and Web3 development.',
-                        date: nextWeek.toISOString().split('T')[0],
-                        location: 'Lecture Hall A',
-                        category: 'technical',
-                        capacity: 120,
-                        createdBy: 2,
-                        status: 'approved'
-                    },
-                    {
-                        id: 1006,
-                        name: 'Basketball Championship',
-                        description: 'Inter-college basketball tournament. Finals will be held on the dates mentioned.',
-                        date: twoWeeks.toISOString().split('T')[0],
-                        location: 'Indoor Court',
-                        category: 'sports',
-                        capacity: 80,
-                        createdBy: 2,
-                        status: 'approved'
-                    },
-                    {
-                        id: 1007,
-                        name: 'Career Guidance Session',
-                        description: 'Industry experts discussing job opportunities, internships, and startup culture.',
-                        date: nextWeek.toISOString().split('T')[0],
-                        location: 'Conference Hall',
-                        category: 'academic',
-                        capacity: 250,
-                        createdBy: 2,
-                        status: 'approved'
-                    },
-                    {
-                        id: 1008,
-                        name: 'Photography Exhibition',
-                        description: 'Student photography showcase. Themes: Nature, Architecture, Emotions.',
-                        date: twoWeeks.toISOString().split('T')[0],
-                        location: 'Art Gallery',
-                        category: 'cultural',
-                        capacity: 150,
-                        createdBy: 2,
-                        status: 'approved'
-                    },
-                    {
-                        id: 1009,
-                        name: 'Hackathon 2026',
-                        description: '24-hour coding marathon. Build innovative solutions. Prizes worth 50,000 rupees.',
-                        date: threeWeeks.toISOString().split('T')[0],
-                        location: 'Computer Lab',
-                        category: 'technical',
-                        capacity: 100,
-                        createdBy: 2,
-                        status: 'pending'
-                    },
-                    {
-                        id: 1010,
-                        name: 'Yoga & Wellness Day',
-                        description: 'Relaxation and wellness session for mental and physical health.',
-                        date: nextWeek.toISOString().split('T')[0],
-                        location: 'Gym Hall',
-                        category: 'other',
-                        capacity: 200,
-                        createdBy: 2,
-                        status: 'approved'
-                    },
-                    {
-                        id: 1011,
-                        name: 'Data Science Bootcamp',
-                        description: 'Learn Python, Data Analysis, Visualization, and Statistical Methods.',
-                        date: twoWeeks.toISOString().split('T')[0],
-                        location: 'Lab Block - Room 105',
-                        category: 'technical',
-                        capacity: 90,
-                        createdBy: 2,
-                        status: 'approved'
-                    },
-                    {
-                        id: 1012,
-                        name: 'Debate Championship',
-                        description: 'Inter-collegiate debate competition on current topics. Prizes included.',
-                        date: lastMonth.toISOString().split('T')[0],
-                        location: 'Auditorium',
-                        category: 'academic',
-                        capacity: 150,
-                        createdBy: 2,
-                        status: 'approved'
-                    }
-                ];
-
-                // Add sample registrations
-                db.registrations = [
-                    { id: 2001, userId: 3, eventId: 1001 },
-                    { id: 2002, userId: 3, eventId: 1002 },
-                    { id: 2003, userId: 4, eventId: 1001 },
-                    { id: 2004, userId: 4, eventId: 1003 },
-                    { id: 2005, userId: 5, eventId: 1005 },
-                    { id: 2006, userId: 5, eventId: 1004 },
-                    { id: 2007, userId: 3, eventId: 1012 }
-                ];
-
-                // Add sample ratings
-                db.ratings = [
-                    { id: 3001, userId: 3, eventId: 1012, rating: 5 },
-                    { id: 3002, userId: 4, eventId: 1012, rating: 4 }
-                ];
-
-                saveDB();
-            }
-
-            if (db.currentUser) {
-                showDashboard();
-            }
+            if (db.currentUser) showDashboard();
         }
 
         function saveDB() {
-            localStorage.setItem('gec_portal_db', JSON.stringify({
-                users: db.users,
-                events: db.events,
-                registrations: db.registrations,
-                ratings: db.ratings
-            }));
+            localStorage.setItem('gec_portal_db', JSON.stringify({ users: db.users, events: db.events, registrations: db.registrations, ratings: db.ratings }));
         }
 
         function toggleForms() {
@@ -972,16 +302,12 @@
             const today = new Date();
             const year = today.getFullYear();
             const month = today.getMonth();
-            
             const firstDay = new Date(year, month, 1);
             const lastDay = new Date(year, month + 1, 0);
             const daysInMonth = lastDay.getDate();
             const startingDayOfWeek = firstDay.getDay();
 
-            let html = `<div class="calendar-header">
-                <h4>${new Date(year, month).toLocaleString('default', { month: 'long', year: 'numeric' })}</h4>
-            </div>
-            <div class="calendar-grid">
+            let html = `<div class="calendar-header"><h4>${new Date(year, month).toLocaleString('default', { month: 'long', year: 'numeric' })}</h4></div><div class="calendar-grid">
                 <div style="font-weight: 600; text-align: center;">Sun</div>
                 <div style="font-weight: 600; text-align: center;">Mon</div>
                 <div style="font-weight: 600; text-align: center;">Tue</div>
@@ -990,9 +316,7 @@
                 <div style="font-weight: 600; text-align: center;">Fri</div>
                 <div style="font-weight: 600; text-align: center;">Sat</div>`;
 
-            for (let i = 0; i < startingDayOfWeek; i++) {
-                html += '<div></div>';
-            }
+            for (let i = 0; i < startingDayOfWeek; i++) html += '<div></div>';
 
             for (let day = 1; day <= daysInMonth; day++) {
                 const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
@@ -1030,6 +354,7 @@
                 regDiv.innerHTML = myRegs.map(reg => {
                     const event = db.events.find(e => e.id === reg.eventId);
                     const creator = db.users.find(u => u.id === event.createdBy);
+                    const isPast = new Date(event.date) < new Date();
                     const myRating = db.ratings.find(r => r.userId === db.currentUser.id && r.eventId === event.id);
                     return `<div class="event-card">
                         <h4>${event.name}</h4>
@@ -1040,27 +365,10 @@
                         </div>
                         <p>${event.description}</p>
                         <p><strong>By:</strong> ${creator.name}</p>
-                        ${new Date(event.date) < new Date() ? `
-                            <div style="margin-top: 1rem;">
-                                <p>Rate this event:</p>
-                                <div class="rating" id="rating${event.id}"></div>
-                            </div>
-                        ` : ''}
+                        ${isPast ? `<div style="margin-top: 1rem;"><p><strong>Rate this event:</strong></p><div class="rating">${Array.from({length: 5}, (_, i) => `<span class="star ${myRating && myRating.rating > i ? 'filled' : ''}" onclick="rateEvent(${event.id}, ${i+1})">★</span>`).join('')}</div></div>` : ''}
                         <button onclick="unregisterEvent(${event.id})" style="background: #e74c3c; width: auto; margin-top: 1rem;">Unregister</button>
                     </div>`;
                 }).join('');
-
-                myRegs.forEach(reg => {
-                    const event = db.events.find(e => e.id === reg.eventId);
-                    if (new Date(event.date) < new Date()) {
-                        const myRating = db.ratings.find(r => r.userId === db.currentUser.id && r.eventId === event.id);
-                        let stars = '';
-                        for (let i = 1; i <= 5; i++) {
-                            stars += `<span class="star ${myRating && myRating.rating >= i ? 'filled' : ''}" onclick="rateEvent(${event.id}, ${i})">★</span>`;
-                        }
-                        document.getElementById(`rating${event.id}`).innerHTML = stars;
-                    }
-                });
             }
 
             const evDiv = document.getElementById('studentEvents');
@@ -1098,9 +406,7 @@
             document.getElementById('clubEventCount').textContent = myEvents.length;
             document.getElementById('clubPendingCount').textContent = pendingEvents.length;
 
-            const totalRegs = myEvents.reduce((sum, e) => 
-                sum + db.registrations.filter(r => r.eventId === e.id).length, 0
-            );
+            const totalRegs = myEvents.reduce((sum, e) => sum + db.registrations.filter(r => r.eventId === e.id).length, 0);
             document.getElementById('clubTotalReg').textContent = totalRegs;
 
             const evDiv = document.getElementById('clubEvents');
@@ -1153,16 +459,11 @@
                     const creator = db.users.find(u => u.id === e.createdBy);
                     return `<div class="event-card">
                         <h4>${e.name}</h4>
-                        <div class="meta">
-                            <span>👤 ${creator.name}</span>
-                            <span>📍 ${e.location}</span>
-                            <span>📅 ${e.date}</span>
-                            <span class="badge category">${e.category}</span>
-                        </div>
+                        <div class="meta"><span>👤 ${creator.name}</span><span>📍 ${e.location}</span><span>📅 ${e.date}</span><span class="badge category">${e.category}</span></div>
                         <p>${e.description}</p>
                         <p><strong>Capacity:</strong> ${e.capacity}</p>
                         <button onclick="approveEvent(${e.id})" style="background: #27ae60; width: auto;">✓ Approve</button>
-                        <button onclick="showRejectForm(${e.id})" style="background: #e74c3c; width: auto;">✗ Reject</button>
+                        <button onclick="showRejectForm(${e.id})" style="background: #e74c3c; width: auto; margin-left: 0.5rem;">✗ Reject</button>
                         <div id="rejectForm${e.id}" class="hidden" style="margin-top: 1rem;">
                             <input type="text" id="rejectReason${e.id}" placeholder="Rejection reason">
                             <button onclick="rejectEvent(${e.id})">Submit</button>
@@ -1224,7 +525,7 @@
             document.getElementById('eventLocation').value = '';
             document.getElementById('eventCapacity').value = '';
             document.getElementById('eventCategory').value = '';
-            alert('✅ Event drafted! Waiting for approval.');
+            alert('✅ Event drafted!');
             showClubDash();
         }
 
@@ -1281,12 +582,7 @@
                 return;
             }
 
-            db.registrations.push({
-                id: Date.now(),
-                userId: db.currentUser.id,
-                eventId: eventId
-            });
-
+            db.registrations.push({ id: Date.now(), userId: db.currentUser.id, eventId: eventId });
             saveDB();
             alert('✅ Registered!');
             showStudentDash();
