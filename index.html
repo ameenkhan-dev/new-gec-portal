@@ -290,59 +290,68 @@
     </div>
 
     <script>
-        // FORCE CLEAR OLD DATA
-        localStorage.clear();
-        
         const db = { users: [], events: [], registrations: [], ratings: [], currentUser: null };
 
         function initDB() {
-            const today = new Date();
-            const getDate = (daysOffset) => new Date(today.getTime() + daysOffset*24*60*60*1000).toISOString().split('T')[0];
+            // Load from localStorage if exists, otherwise use sample data
+            const saved = localStorage.getItem('gec_portal_db');
+            if (saved) {
+                const parsed = JSON.parse(saved);
+                db.users = parsed.users || [];
+                db.events = parsed.events || [];
+                db.registrations = parsed.registrations || [];
+                db.ratings = parsed.ratings || [];
+            } else {
+                // First time - initialize sample data
+                const today = new Date();
+                const getDate = (daysOffset) => new Date(today.getTime() + daysOffset*24*60*60*1000).toISOString().split('T')[0];
 
-            // Sample users
-            db.users = [
-                { id: 1, name: 'Admin User', email: 'admin@gec.ac.in', password: 'admin123', role: 'super_admin' },
-                { id: 2, name: 'Tech Club', email: 'club@gec.ac.in', password: 'club123', role: 'club_leader' },
-                { id: 3, name: 'Test Student', email: 'student@gec.ac.in', password: 'student123', role: 'student' },
-                { id: 4, name: 'Rohit Sharma', email: 'rohit@gec.ac.in', password: 'pass123', role: 'student' },
-                { id: 5, name: 'Priya Singh', email: 'priya@gec.ac.in', password: 'pass123', role: 'student' },
-                { id: 6, name: 'Arjun Kumar', email: 'arjun@gec.ac.in', password: 'pass123', role: 'student' },
-                { id: 7, name: 'Sarah Khan', email: 'sarah@gec.ac.in', password: 'pass123', role: 'student' }
-            ];
+                // Sample users
+                db.users = [
+                    { id: 1, name: 'Admin User', email: 'admin@gec.ac.in', password: 'admin123', role: 'super_admin' },
+                    { id: 2, name: 'Tech Club', email: 'club@gec.ac.in', password: 'club123', role: 'club_leader' },
+                    { id: 3, name: 'Test Student', email: 'student@gec.ac.in', password: 'student123', role: 'student' },
+                    { id: 4, name: 'Rohit Sharma', email: 'rohit@gec.ac.in', password: 'pass123', role: 'student' },
+                    { id: 5, name: 'Priya Singh', email: 'priya@gec.ac.in', password: 'pass123', role: 'student' },
+                    { id: 6, name: 'Arjun Kumar', email: 'arjun@gec.ac.in', password: 'pass123', role: 'student' },
+                    { id: 7, name: 'Sarah Khan', email: 'sarah@gec.ac.in', password: 'pass123', role: 'student' }
+                ];
 
-            // Sample events with proper dates
-            db.events = [
-                { id: 1001, name: 'Tech Summit 2026', description: 'Advanced Web Development with React, Node.js. Learn from industry experts.', date: getDate(7), location: 'Main Auditorium', category: 'technical', capacity: 200, createdBy: 2, status: 'approved' },
-                { id: 1002, name: 'Cricket Tournament 2026', description: 'Inter-batch cricket tournament. T20 format. Prizes: 10,000 rupees.', date: getDate(14), location: 'Sports Ground', category: 'sports', capacity: 100, createdBy: 2, status: 'approved' },
-                { id: 1003, name: 'AI & Machine Learning', description: 'Hands-on workshop on ML algorithms, TensorFlow. Certificate provided.', date: getDate(21), location: 'Lab Block 201', category: 'technical', capacity: 80, createdBy: 2, status: 'approved' },
-                { id: 1004, name: 'Annual Cultural Fest', description: 'Music, dance, drama performances. Food stalls & live entertainment.', date: getDate(21), location: 'Open Ground', category: 'cultural', capacity: 500, createdBy: 2, status: 'approved' },
-                { id: 1005, name: 'Blockchain & Crypto', description: 'Understanding blockchain, cryptocurrency trading, Web3 development.', date: getDate(7), location: 'Lecture Hall A', category: 'technical', capacity: 120, createdBy: 2, status: 'approved' },
-                { id: 1006, name: 'Basketball Championship', description: 'Inter-college basketball tournament. Trophy & medals for winners.', date: getDate(14), location: 'Indoor Court', category: 'sports', capacity: 80, createdBy: 2, status: 'approved' },
-                { id: 1007, name: 'Career Guidance Session', description: 'Industry experts on job opportunities, internships, startups.', date: getDate(7), location: 'Conference Hall', category: 'academic', capacity: 250, createdBy: 2, status: 'approved' },
-                { id: 1008, name: 'Photography Exhibition', description: 'Student photography showcase. Themes: Nature, Architecture, Emotions.', date: getDate(14), location: 'Art Gallery', category: 'cultural', capacity: 150, createdBy: 2, status: 'approved' },
-                { id: 1009, name: 'Hackathon 2026', description: '24-hour coding marathon. Build solutions. Prizes: 50,000 rupees.', date: getDate(21), location: 'Computer Lab', category: 'technical', capacity: 100, createdBy: 2, status: 'pending' },
-                { id: 1010, name: 'Yoga & Wellness', description: 'Relaxation session for health. Meditation & breathing exercises.', date: getDate(7), location: 'Gym Hall', category: 'other', capacity: 200, createdBy: 2, status: 'approved' },
-                { id: 1011, name: 'Data Science Bootcamp', description: 'Learn Python, Data Analysis, Visualization & Statistical Methods.', date: getDate(14), location: 'Lab Block 105', category: 'technical', capacity: 90, createdBy: 2, status: 'approved' },
-                { id: 1012, name: 'Debate Championship', description: 'Inter-collegiate debate on current topics. Prizes included.', date: getDate(-10), location: 'Auditorium', category: 'academic', capacity: 150, createdBy: 2, status: 'approved' }
-            ];
+                // Sample events
+                db.events = [
+                    { id: 1001, name: 'Tech Summit 2026', description: 'Advanced Web Development with React, Node.js. Learn from industry experts.', date: getDate(7), location: 'Main Auditorium', category: 'technical', capacity: 200, createdBy: 2, status: 'approved' },
+                    { id: 1002, name: 'Cricket Tournament 2026', description: 'Inter-batch cricket tournament. T20 format. Prizes: 10,000 rupees.', date: getDate(14), location: 'Sports Ground', category: 'sports', capacity: 100, createdBy: 2, status: 'approved' },
+                    { id: 1003, name: 'AI & Machine Learning', description: 'Hands-on workshop on ML algorithms, TensorFlow. Certificate provided.', date: getDate(21), location: 'Lab Block 201', category: 'technical', capacity: 80, createdBy: 2, status: 'approved' },
+                    { id: 1004, name: 'Annual Cultural Fest', description: 'Music, dance, drama performances. Food stalls & live entertainment.', date: getDate(21), location: 'Open Ground', category: 'cultural', capacity: 500, createdBy: 2, status: 'approved' },
+                    { id: 1005, name: 'Blockchain & Crypto', description: 'Understanding blockchain, cryptocurrency trading, Web3 development.', date: getDate(7), location: 'Lecture Hall A', category: 'technical', capacity: 120, createdBy: 2, status: 'approved' },
+                    { id: 1006, name: 'Basketball Championship', description: 'Inter-college basketball tournament. Trophy & medals for winners.', date: getDate(14), location: 'Indoor Court', category: 'sports', capacity: 80, createdBy: 2, status: 'approved' },
+                    { id: 1007, name: 'Career Guidance Session', description: 'Industry experts on job opportunities, internships, startups.', date: getDate(7), location: 'Conference Hall', category: 'academic', capacity: 250, createdBy: 2, status: 'approved' },
+                    { id: 1008, name: 'Photography Exhibition', description: 'Student photography showcase. Themes: Nature, Architecture, Emotions.', date: getDate(14), location: 'Art Gallery', category: 'cultural', capacity: 150, createdBy: 2, status: 'approved' },
+                    { id: 1009, name: 'Hackathon 2026', description: '24-hour coding marathon. Build solutions. Prizes: 50,000 rupees.', date: getDate(21), location: 'Computer Lab', category: 'technical', capacity: 100, createdBy: 2, status: 'pending' },
+                    { id: 1010, name: 'Yoga & Wellness', description: 'Relaxation session for health. Meditation & breathing exercises.', date: getDate(7), location: 'Gym Hall', category: 'other', capacity: 200, createdBy: 2, status: 'approved' },
+                    { id: 1011, name: 'Data Science Bootcamp', description: 'Learn Python, Data Analysis, Visualization & Statistical Methods.', date: getDate(14), location: 'Lab Block 105', category: 'technical', capacity: 90, createdBy: 2, status: 'approved' },
+                    { id: 1012, name: 'Debate Championship', description: 'Inter-collegiate debate on current topics. Prizes included.', date: getDate(-10), location: 'Auditorium', category: 'academic', capacity: 150, createdBy: 2, status: 'approved' }
+                ];
 
-            // Sample registrations (many students registered)
-            db.registrations = [
-                { id: 2001, userId: 3, eventId: 1001 }, { id: 2002, userId: 3, eventId: 1002 }, { id: 2003, userId: 3, eventId: 1012 },
-                { id: 2004, userId: 4, eventId: 1001 }, { id: 2005, userId: 4, eventId: 1003 }, { id: 2006, userId: 4, eventId: 1012 },
-                { id: 2007, userId: 5, eventId: 1005 }, { id: 2008, userId: 5, eventId: 1004 },
-                { id: 2009, userId: 6, eventId: 1002 }, { id: 2010, userId: 6, eventId: 1006 },
-                { id: 2011, userId: 7, eventId: 1007 }, { id: 2012, userId: 7, eventId: 1010 }
-            ];
+                // Sample registrations
+                db.registrations = [
+                    { id: 2001, userId: 3, eventId: 1001 }, { id: 2002, userId: 3, eventId: 1002 }, { id: 2003, userId: 3, eventId: 1012 },
+                    { id: 2004, userId: 4, eventId: 1001 }, { id: 2005, userId: 4, eventId: 1003 }, { id: 2006, userId: 4, eventId: 1012 },
+                    { id: 2007, userId: 5, eventId: 1005 }, { id: 2008, userId: 5, eventId: 1004 },
+                    { id: 2009, userId: 6, eventId: 1002 }, { id: 2010, userId: 6, eventId: 1006 },
+                    { id: 2011, userId: 7, eventId: 1007 }, { id: 2012, userId: 7, eventId: 1010 }
+                ];
 
-            // Sample ratings
-            db.ratings = [
-                { id: 3001, userId: 3, eventId: 1012, rating: 5 },
-                { id: 3002, userId: 4, eventId: 1012, rating: 4 },
-                { id: 3003, userId: 3, eventId: 1012, rating: 5 }
-            ];
+                // Sample ratings
+                db.ratings = [
+                    { id: 3001, userId: 3, eventId: 1012, rating: 5 },
+                    { id: 3002, userId: 4, eventId: 1012, rating: 4 },
+                    { id: 3003, userId: 3, eventId: 1012, rating: 5 }
+                ];
 
-            saveDB();
+                saveDB();
+            }
+
             db.currentUser = JSON.parse(localStorage.getItem('gec_portal_user'));
             if (db.currentUser) showDashboard();
         }
