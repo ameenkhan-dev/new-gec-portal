@@ -61,6 +61,16 @@
         @keyframes slideInDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; } }
         .alert-error { background: #e74c3c; }
         .alert-success { background: #27ae60; }
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 1000; align-items: center; justify-content: center; }
+        .modal.open { display: flex; }
+        .modal-content { background: white; padding: 2rem; border-radius: 12px; max-width: 600px; width: 90%; max-height: 80vh; overflow-y: auto; box-shadow: 0 10px 40px rgba(0,0,0,0.3); }
+        .modal-content h3 { color: #2c3e50; margin-bottom: 1.5rem; font-size: 1.6rem; }
+        .modal-close { background: #e74c3c; color: white; border: none; padding: 0.5rem 1rem; border-radius: 6px; cursor: pointer; float: right; }
+        .filter-bar { display: flex; gap: 1rem; margin-bottom: 1.5rem; flex-wrap: wrap; align-items: center; }
+        .filter-bar input, .filter-bar select { padding: 0.7rem; border: 2px solid #ecf0f1; border-radius: 8px; font-size: 0.95rem; }
+        .filter-bar input:focus, .filter-bar select:focus { outline: none; border-color: #667eea; box-shadow: 0 0 10px rgba(102,126,234,0.3); }
+        .clear-filters { background: #95a5a6; padding: 0.7rem 1.2rem; border: none; border-radius: 8px; color: white; cursor: pointer; font-weight: 600; transition: all 0.3s; }
+        .clear-filters:hover { background: #7f8c8d; }
     </style>
 </head>
 <body>
@@ -106,7 +116,22 @@
                 </div>
                 <div class="section"><h3>📅 Event Calendar</h3><div class="calendar" id="studentCalendar"></div></div>
                 <div class="section"><h3>📌 My Registrations</h3><div id="studentRegistrations"><p>No registrations yet.</p></div></div>
-                <div class="section"><h3>🎯 Available Events</h3><div id="studentEvents"><p>No approved events available.</p></div></div>
+                <div class="section">
+                    <h3>🎯 Available Events</h3>
+                    <div class="filter-bar">
+                        <input type="text" id="searchInput" placeholder="🔍 Search events..." onkeyup="filterStudentEvents()">
+                        <select id="categoryFilter" onchange="filterStudentEvents()">
+                            <option value="">All Categories</option>
+                            <option value="technical">Technical</option>
+                            <option value="sports">Sports</option>
+                            <option value="cultural">Cultural</option>
+                            <option value="academic">Academic</option>
+                            <option value="other">Other</option>
+                        </select>
+                        <button class="clear-filters" onclick="clearFilters()">Clear Filters</button>
+                    </div>
+                    <div id="studentEvents"><p>No approved events available.</p></div>
+                </div>
             </div>
 
             <div id="clubDash" class="dashboard hidden">
@@ -155,6 +180,14 @@
                     <table class="table"><thead><tr><th>Event</th><th>By</th><th>Date</th><th>Category</th><th>Registrations</th><th>Status</th></tr></thead><tbody id="adminEventsList"><tr><td colspan="6">No events.</td></tr></tbody></table>
                 </div>
             </div>
+        </div>
+    </div>
+
+    <div id="eventModal" class="modal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeEventModal()">✕</button>
+            <h3 id="modalEventName"></h3>
+            <div id="modalEventContent"></div>
         </div>
     </div>
 
@@ -375,24 +408,7 @@
             if (approvedEvents.length === 0) {
                 evDiv.innerHTML = '<p>No approved events available.</p>';
             } else {
-                evDiv.innerHTML = approvedEvents.map(e => {
-                    const regs = db.registrations.filter(r => r.eventId === e.id);
-                    const isRegistered = myRegs.some(r => r.eventId === e.id);
-                    const isFull = regs.length >= e.capacity;
-                    return `<div class="event-card">
-                        <h4>${e.name}</h4>
-                        <div class="meta">
-                            <span>📍 ${e.location}</span>
-                            <span>📅 ${e.date}</span>
-                            <span class="badge category">${e.category}</span>
-                            <span>👥 ${regs.length}/${e.capacity}</span>
-                        </div>
-                        <p>${e.description}</p>
-                        <button onclick="registerEvent(${e.id})" ${isRegistered || isFull ? 'disabled' : ''} style="width: auto;">
-                            ${isRegistered ? '✓ Registered' : (isFull ? 'Full' : 'Register')}
-                        </button>
-                    </div>`;
-                }).join('');
+                filterStudentEvents();
             }
         }
 
@@ -646,6 +662,86 @@
             document.getElementById('registerForm').classList.add('hidden');
             document.getElementById('loginEmail').value = '';
             document.getElementById('loginPassword').value = '';
+        }
+
+        function openEventModal(eventId) {
+            const event = db.events.find(e => e.id === eventId);
+            if (!event) return;
+
+            const creator = db.users.find(u => u.id === event.createdBy);
+            const regs = db.registrations.filter(r => r.eventId === eventId);
+            const avgRating = db.ratings.filter(r => r.eventId === eventId).reduce((sum, r) => sum + r.rating, 0) / db.ratings.filter(r => r.eventId === eventId).length || 0;
+            const isRegistered = db.registrations.some(r => r.userId === db.currentUser.id && r.eventId === eventId);
+            const isFull = regs.length >= event.capacity;
+
+            document.getElementById('modalEventName').textContent = event.name;
+            document.getElementById('modalEventContent').innerHTML = `
+                <div style="margin-bottom: 1.5rem;">
+                    <p><strong>Description:</strong></p>
+                    <p>${event.description}</p>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem;">
+                    <div><strong>📅 Date:</strong> ${event.date}</div>
+                    <div><strong>📍 Location:</strong> ${event.location}</div>
+                    <div><strong>👤 By:</strong> ${creator.name}</div>
+                    <div><strong>🏷️ Category:</strong> <span class="badge category">${event.category}</span></div>
+                    <div><strong>👥 Registrations:</strong> ${regs.length}/${event.capacity}</div>
+                    <div><strong>⭐ Avg Rating:</strong> ${avgRating > 0 ? avgRating.toFixed(1) : 'No ratings yet'}</div>
+                </div>
+                <div style="margin-top: 1.5rem;">
+                    <button onclick="registerEvent(${eventId})" ${isRegistered || isFull ? 'disabled' : ''} style="width: auto;">
+                        ${isRegistered ? '✓ Already Registered' : (isFull ? 'Full' : '📝 Register Now')}
+                    </button>
+                </div>
+            `;
+            document.getElementById('eventModal').classList.add('open');
+        }
+
+        function closeEventModal() {
+            document.getElementById('eventModal').classList.remove('open');
+        }
+
+        function filterStudentEvents() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const categoryFilter = document.getElementById('categoryFilter').value;
+            const myRegs = db.registrations.filter(r => r.userId === db.currentUser.id);
+            const approvedEvents = db.events.filter(e => e.status === 'approved');
+
+            const filtered = approvedEvents.filter(e => {
+                const matchesSearch = e.name.toLowerCase().includes(searchTerm) || e.description.toLowerCase().includes(searchTerm);
+                const matchesCategory = !categoryFilter || e.category === categoryFilter;
+                return matchesSearch && matchesCategory;
+            });
+
+            const evDiv = document.getElementById('studentEvents');
+            if (filtered.length === 0) {
+                evDiv.innerHTML = '<p>No events match your search.</p>';
+            } else {
+                evDiv.innerHTML = filtered.map(e => {
+                    const regs = db.registrations.filter(r => r.eventId === e.id);
+                    const isRegistered = myRegs.some(r => r.eventId === e.id);
+                    const isFull = regs.length >= e.capacity;
+                    return `<div class="event-card" style="cursor: pointer;" onclick="openEventModal(${e.id})">
+                        <h4>${e.name}</h4>
+                        <div class="meta">
+                            <span>📍 ${e.location}</span>
+                            <span>📅 ${e.date}</span>
+                            <span class="badge category">${e.category}</span>
+                            <span>👥 ${regs.length}/${e.capacity}</span>
+                        </div>
+                        <p>${e.description}</p>
+                        <button onclick="event.stopPropagation(); registerEvent(${e.id})" ${isRegistered || isFull ? 'disabled' : ''} style="width: auto;">
+                            ${isRegistered ? '✓ Registered' : (isFull ? 'Full' : 'Register')}
+                        </button>
+                    </div>`;
+                }).join('');
+            }
+        }
+
+        function clearFilters() {
+            document.getElementById('searchInput').value = '';
+            document.getElementById('categoryFilter').value = '';
+            filterStudentEvents();
         }
 
         window.addEventListener('DOMContentLoaded', initDB);
