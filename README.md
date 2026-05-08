@@ -53,18 +53,11 @@ Email: student@gec.ac.in
 Password: student123
 ```
 
-## How to Use
-
-1. Open `index.html` in any browser
-2. All data stored in browser localStorage (persists)
-3. Register new accounts with @gec.ac.in emails
-4. Test all 3 roles and workflows
-
 ## Deployment
 
-- **Single HTML file** - No build process needed
-- Deploy to any static host (Netlify, Vercel, GitHub Pages, etc.)
-- Works offline - all data in browser
+- **HTML file** - No build process needed
+- Deploy to any *static* host (preferably render)
+- Works offline too - all data in browser
 
 ## Tech Stack
 
