@@ -1,4 +1,4 @@
-# GEC Event Portal - Simple HTML Edition
+# GEC Event Portal 
 
 A complete event management portal for GEC with authentication, role-based dashboards, and event approval workflow.
 
