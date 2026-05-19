@@ -855,8 +855,8 @@
             document.getElementById('eventModal').classList.remove('open');
         }
 
-        function showCalendarPopup(event, dateStr, isStudentView) {
-            event.stopPropagation();
+        function showCalendarPopup(clickEvent, dateStr, isStudentView) {
+            clickEvent.stopPropagation();
             
             // Remove existing popup if any
             const existingPopup = document.querySelector('.calendar-popup');
@@ -866,7 +866,10 @@
             const dayEvents = db.events.filter(e => e.date === dateStr && e.status === 'approved');
             const myRegs = db.registrations.filter(r => r.userId === db.currentUser.id);
             
-            if (dayEvents.length === 0) return;
+            if (dayEvents.length === 0) {
+                console.log('No events found for', dateStr);
+                return;
+            }
 
             // Sort: registered events first, then available
             const registeredEvents = dayEvents.filter(e => myRegs.some(r => r.eventId === e.id));
@@ -879,9 +882,9 @@
                 const isReg = myRegs.some(r => r.eventId === e.id);
                 const creator = db.users.find(u => u.id === e.createdBy);
                 popupContent += `
-                    <div style="margin-bottom: 1rem; padding-bottom: 0.8rem; border-bottom: 1px solid #ecf0f1; cursor: pointer;" onclick="openEventModal(${e.id})">
-                        <h4 style="margin: 0 0 0.5rem 0; font-size: 0.95rem;">${e.name}</h4>
-                        <div class="popup-info">👤 ${creator.name}</div>
+                    <div style="margin-bottom: 1rem; padding-bottom: 0.8rem; border-bottom: 1px solid #ecf0f1; cursor: pointer;" onclick="event.stopPropagation(); openEventModal(${e.id})">
+                        <h4 style="margin: 0 0 0.5rem 0; font-size: 0.95rem; cursor: pointer; color: #667eea;">${e.name}</h4>
+                        <div class="popup-info">👤 ${creator ? creator.name : 'Unknown'}</div>
                         <div class="popup-info">📅 ${e.date}</div>
                         <div style="margin-top: 0.5rem;">
                             <span class="popup-category">${e.category}</span>
@@ -898,21 +901,21 @@
             const popup = document.createElement('div');
             popup.className = 'calendar-popup';
             popup.innerHTML = `
-                <button class="popup-close" onclick="this.parentElement.remove()">✕</button>
-                <h4 style="margin-top: 0.5rem;">📅 ${dateStr}</h4>
-                <div>${popupContent}</div>
+                <button class="popup-close" onclick="event.stopPropagation(); this.parentElement.remove()">✕</button>
+                <h4 style="margin-top: 0.5rem; color: #2c3e50;">📅 ${dateStr}</h4>
+                <div>${popupContent || '<p style="color: #999;">No events on this date</p>'}</div>
             `;
 
             // Position popup near cursor
-            popup.style.left = (event.pageX + 10) + 'px';
-            popup.style.top = (event.pageY + 10) + 'px';
+            popup.style.left = (clickEvent.pageX + 10) + 'px';
+            popup.style.top = (clickEvent.pageY + 10) + 'px';
 
             document.body.appendChild(popup);
 
             // Close popup when clicking outside
             setTimeout(() => {
                 document.addEventListener('click', function closePopupOnClick(e) {
-                    if (!popup.contains(e.target)) {
+                    if (popup && !popup.contains(e.target)) {
                         popup.remove();
                         document.removeEventListener('click', closePopupOnClick);
                     }
