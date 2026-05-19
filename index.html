@@ -495,13 +495,13 @@
                 
                 let indicators = '';
                 if (registeredEvents.length > 0) {
-                    indicators += `<div class="indicator registered" onclick="showCalendarPopup(event, '${dateStr}', ${containerId === 'studentCalendar' ? 'true' : 'false'})"></div>`;
+                    indicators += `<div class="indicator registered" onclick="handleCalendarClick(this, '${dateStr}')"></div>`;
                 }
                 if (availableEvents.length > 0) {
-                    indicators += `<div class="indicator available" onclick="showCalendarPopup(event, '${dateStr}', ${containerId === 'studentCalendar' ? 'true' : 'false'})"></div>`;
+                    indicators += `<div class="indicator available" onclick="handleCalendarClick(this, '${dateStr}')"></div>`;
                 }
                 
-                html += `<div class="${classes}" data-date="${dateStr}" data-events="${dayEvents.map(e => e.id).join(',')}" onclick="showCalendarPopup(event, '${dateStr}', ${containerId === 'studentCalendar' ? 'true' : 'false'})">${day}${indicators ? `<div class="calendar-indicators">${indicators}</div>` : ''}</div>`;
+                html += `<div class="${classes}" data-date="${dateStr}" onclick="handleCalendarClick(this, '${dateStr}')">${day}${indicators ? `<div class="calendar-indicators">${indicators}</div>` : ''}</div>`;
             }
 
             html += '</div>';
@@ -511,6 +511,16 @@
             </div>`;
             
             document.getElementById(containerId).innerHTML = html;
+        }
+
+        function handleCalendarClick(element, dateStr) {
+            const rect = element.getBoundingClientRect();
+            const fakeEvent = {
+                pageX: rect.left + rect.width / 2,
+                pageY: rect.bottom + 5,
+                stopPropagation: () => {}
+            };
+            showCalendarPopup(fakeEvent, dateStr, true);
         }
 
         function showStudentDash() {
