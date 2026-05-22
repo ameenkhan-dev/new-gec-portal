@@ -150,6 +150,7 @@
                     <div class="stat-card"><div class="number" id="studentAvailableCount">0</div><div class="label">Available</div></div>
                     <div class="stat-card"><div class="number" id="studentAttendedCount">0</div><div class="label">Attended</div></div>
                 </div>
+                <div class="section"><h3>🔥 Trending Events</h3><div id="trendingEvents"></div></div>
                 <div class="section"><h3>📅 Event Calendar</h3><div class="calendar" id="studentCalendar"></div></div>
                 <div class="section"><h3>📌 My Registrations</h3><div id="studentRegistrations"><p>No registrations yet.</p></div></div>
                 <div class="section">
@@ -539,6 +540,7 @@
             document.getElementById('studentAttendedCount').textContent = attendedCount;
 
             buildCalendar('studentCalendar', approvedEvents);
+            showTrendingEvents();
 
             const regDiv = document.getElementById('studentRegistrations');
             if (myRegs.length === 0) {
@@ -569,6 +571,49 @@
                 evDiv.innerHTML = '<p>No approved events available.</p>';
             } else {
                 filterStudentEvents();
+            }
+        }
+
+        function showTrendingEvents() {
+            const approvedEvents = db.events.filter(e => e.status === 'approved');
+            
+            const trendingList = approvedEvents.map(event => {
+                const regCount = db.registrations.filter(r => r.eventId === event.id).length;
+                return { ...event, regCount };
+            }).sort((a, b) => b.regCount - a.regCount).slice(0, 3);
+
+            const trendingDiv = document.getElementById('trendingEvents');
+            
+            if (trendingList.length === 0) {
+                trendingDiv.innerHTML = '<p>No events yet.</p>';
+            } else {
+                trendingDiv.innerHTML = trendingList.map(event => {
+                    const creator = db.users.find(u => u.id === event.createdBy);
+                    const myReg = db.registrations.find(r => r.userId === db.currentUser.id && r.eventId === event.id);
+                    const isFull = event.regCount >= event.capacity;
+                    return `<div class="event-card" style="border-left: 4px solid #f39c12; background: linear-gradient(135deg, #fff9e6 0%, #fffbf0 100%);">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                            <div style="flex: 1;">
+                                <h4>${event.name}</h4>
+                                <div class="meta">
+                                    <span>📍 ${event.location}</span>
+                                    <span>📅 ${event.date}</span>
+                                    <span class="badge category">${event.category}</span>
+                                </div>
+                            </div>
+                            <div style="text-align: center; background: white; padding: 0.8rem 1.2rem; border-radius: 8px; margin-left: 1rem;">
+                                <div style="font-size: 1.8rem; font-weight: bold; color: #f39c12;">${event.regCount}</div>
+                                <div style="font-size: 0.8rem; color: #999;">Registered</div>
+                            </div>
+                        </div>
+                        <p>${event.description}</p>
+                        <p><strong>By:</strong> ${creator.name}</p>
+                        <div style="display: flex; gap: 0.8rem; margin-top: 1rem;">
+                            ${isFull ? `<span class="badge" style="background: #e74c3c; color: white;">FULL</span>` : `<span class="badge" style="background: #27ae60; color: white;">Available</span>`}
+                            ${myReg ? `<span class="badge" style="background: #3498db; color: white;">✓ Registered</span>` : `<button onclick="registerEvent(${event.id})" style="background: #27ae60; width: auto; padding: 0.5rem 1rem; font-size: 0.9rem;">Register</button>`}
+                        </div>
+                    </div>`;
+                }).join('');
             }
         }
 
